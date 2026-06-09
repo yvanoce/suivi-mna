@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1D9E75">
+<title>Suivi Cuisine — MNA</title>
+<link rel="manifest" href="#" id="manifest-link">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --green:   #1D9E75; --green-l: #E1F5EE; --green-d: #085041;
+  --amber:   #BA7517; --amber-l: #FAEEDA; --amber-d: #633806;
+  --blue:    #185FA5; --blue-l:  #E6F1FB; --blue-d:  #0C447C;
+  --purple:  #534AB7; --purple-l:#EEEDFE; --purple-d:#3C3489;
+  --coral:   #D85A30; --coral-l: #FAECE7; --coral-d: #712B13;
+  --pink:    #C2185B; --pink-l:  #FCE4EC; --pink-d:  #880E4F;
+  --gray-l:  #F5F3EE; --gray-m:  #E2DED6; --gray:    #6B6863;
+  --border:  #E2DED6; --text:    #1E1D1B; --text2:   #6B6863;
+  --bg:      #FAFAF8; --bg2:     #F5F3EE; --white:   #FFFFFF;
+  --radius:  10px; --radius-sm: 6px;
+  --shadow:  0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+  --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--bg);display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:10}
+.topbar-logo{width:28px;height:28px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;flex-shrink:0}
+.topbar-title{font-size:14px;font-weight:600;color:var(--text);flex:1}
+.topbar-sub{font-size:11px;color:var(--text2)}
+.topbar-actions{display:flex;gap:8px}
+
+/* ── LAYOUT ── */
+.layout{display:flex;flex:1;overflow:hidden}
+.sidebar{width:230px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-top{padding:12px;border-bottom:1px solid var(--border)}
+.sidebar-list{flex:1;overflow-y:auto;padding:8px}
+.main{flex:1;overflow-y:auto;padding:16px}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative}
+.search-wrap input{width:100%;padding:7px 10px 7px 30px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg2);font-family:var(--font);font-size:12px;color:var(--text);outline:none}
+.search-wrap input:focus{border-color:var(--green);background:var(--white)}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text2);pointer-events:none}
+
+/* ── JEUNE ITEMS ── */
+.jeune-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background .12s;margin-bottom:2px}
+.jeune-item:hover{background:var(--bg2)}
+.jeune-item.active{background:var(--green-l)}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;letter-spacing:-.02em}
+.jeune-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.jeune-meta{font-size:10px;color:var(--text2);margin-top:1px}
+
+/* ── BUTTONS ── */
+btn,button{font-family:var(--font);cursor:pointer;border-radius:var(--radius-sm);font-size:12px;padding:6px 14px;border:1px solid var(--border);background:var(--white);color:var(--text);transition:all .12s;outline:none}
+button:hover{background:var(--bg2)}
+.btn-green{background:var(--green);color:white;border-color:var(--green);font-weight:500}
+.btn-green:hover{background:var(--green-d);border-color:var(--green-d)}
+.btn-blue{background:var(--blue-l);color:var(--blue-d);border-color:var(--blue)}
+.btn-blue:hover{background:#d0e8f8}
+.btn-danger{color:var(--coral-d);border-color:var(--coral)}
+.btn-danger:hover{background:var(--coral-l)}
+.btn-sm{padding:4px 10px;font-size:11px}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+
+/* ── INPUTS ── */
+input[type=text],input[type=date],input[type=search],textarea,select{
+  font-family:var(--font);color:var(--text);background:var(--bg2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:7px 10px;font-size:12px;outline:none;width:100%;transition:border .12s,background .12s}
+input:focus,textarea:focus,select:focus{border-color:var(--green);background:var(--white)}
+textarea{resize:vertical;line-height:1.6;min-height:72px}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:14px;gap:0;overflow-x:auto}
+.tab{padding:8px 14px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);white-space:nowrap;transition:all .12s;font-family:var(--font)}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--green-d);border-bottom-color:var(--green);font-weight:500}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--bg2);border-radius:var(--radius-sm);padding:10px 12px;text-align:center;border:1px solid var(--border)}
+.stat-n{font-size:22px;font-weight:600;line-height:1;font-family:var(--mono)}
+.stat-l{font-size:10px;color:var(--text2);margin-top:3px;font-weight:400}
+
+/* ── ENTRIES ── */
+.entry{border-left:3px solid var(--green);padding:10px 12px;background:var(--bg2);border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin-bottom:8px;transition:box-shadow .12s}
+.entry:hover{box-shadow:var(--shadow)}
+.entry.warn{border-left-color:var(--coral)}
+.entry-date{font-size:11px;font-weight:600;color:var(--green-d);margin-bottom:5px;font-family:var(--mono)}
+.entry.warn .entry-date{color:var(--coral-d)}
+.entry-text{font-size:12px;line-height:1.7;white-space:pre-wrap;color:var(--text)}
+.entry-actions{display:flex;gap:6px;margin-top:8px}
+
+/* ── TAGS ── */
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;margin:2px 3px 2px 0;cursor:default}
+.tag-green{background:var(--green-l);color:var(--green-d)}
+.tag-amber{background:var(--amber-l);color:var(--amber-d)}
+.tag-blue{background:var(--blue-l);color:var(--blue-d)}
+.tag-coral{background:var(--coral-l);color:var(--coral-d)}
+.tag-gray{background:var(--gray-l);color:var(--gray)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+
+/* ── ATELIERS ── */
+.atelier-hdr{display:grid;grid-template-columns:1fr 26px 26px;gap:6px;padding:0 4px 4px;border-bottom:1px solid var(--border);margin-bottom:2px}
+.atelier-row{display:grid;grid-template-columns:1fr 26px 26px;gap:6px;align-items:center;padding:5px 4px;border-bottom:1px solid var(--border);font-size:12px}
+.atelier-row:last-child{border:none}
+input[type=checkbox]{width:15px;height:15px;accent-color:var(--green);cursor:pointer;justify-self:center}
+
+/* ── STARS ── */
+.stars{display:flex;gap:3px}
+.star{width:13px;height:13px;border-radius:3px;background:var(--bg2);border:1px solid var(--border);cursor:pointer;transition:all .1s;flex-shrink:0}
+.star.on{background:var(--amber);border-color:var(--amber-d)}
+
+/* ── SKILL ROW ── */
+.skill-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.skill-row:last-child{border:none}
+
+/* ── BADGE DOT ── */
+.warn-badge{display:inline-block;width:7px;height:7px;background:var(--amber);border-radius:50%;margin-left:4px;vertical-align:middle}
+
+/* ── DROP ZONE ── */
+.drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:22px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2)}
+.drop-zone:hover,.drop-zone.over{border-color:var(--green);background:var(--green-l)}
+.drop-zone-icon{font-size:28px;margin-bottom:8px}
+
+/* ── PROGRESS ── */
+.prog-wrap{height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-top:6px}
+.prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s}
+
+/* ── MODAL OVERLAY ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);padding:20px;width:420px;max-width:calc(100vw - 32px);box-shadow:0 8px 32px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:14px;font-weight:600;margin-bottom:14px}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:4rem 2rem;color:var(--text2)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:6px}
+
+/* ── ALERT ── */
+.alert-info{background:var(--blue-l);border:1px solid var(--blue);color:var(--blue-d);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;margin-bottom:10px;line-height:1.6}
+.alert-warn{background:var(--amber-l);border:1px solid var(--amber);color:var(--amber-d);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;margin-bottom:10px}
+.alert-success{background:var(--green-l);border:1px solid var(--green);color:var(--green-d);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;margin-bottom:10px}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── HEADER PANEL ── */
+.panel-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.panel-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+
+/* ── INSTALL BANNER ── */
+.install-banner{background:var(--green-l);border:1px solid var(--green);color:var(--green-d);padding:8px 14px;font-size:12px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.install-banner b{font-weight:600}
+
+/* scrollbars */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── IMPORT SECTION ── */
+#import-section{display:none;padding:12px;border-bottom:1px solid var(--border);background:var(--bg2)}
+
+@media(max-width:600px){
+  .sidebar{display:none}
+  .topbar-sub{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="install-banner" id="install-banner" style="display:none">
+  <span>🍳</span>
+  <span><b>Installer l'appli</b> — Clique sur le bouton ci-dessous pour l'ajouter à ton bureau</span>
+  <button class="btn-sm btn-green" onclick="installApp()" style="margin-left:auto;white-space:nowrap">Installer</button>
+  <button class="btn-sm" onclick="document.getElementById('install-banner').style.display='none'" style="padding:4px 6px">×</button>
+</div>
+
+<div class="topbar">
+  <div class="topbar-logo">🍳</div>
+  <div>
+    <div class="topbar-title">Suivi Cuisine — MNA</div>
+  </div>
+  <div class="topbar-sub" id="topbar-count">0 jeunes</div>
+  <div class="topbar-actions">
+    <button class="btn-sm btn-blue" onclick="toggleImport()">📄 Importer .docx</button>
+    <button class="btn-sm btn-green" onclick="openNewJeune()">+ Nouveau</button>
+    <button class="btn-sm" onclick="exportCurrentPDF()" id="btn-export" style="display:none">⬇ PDF</button>
+    <button class="btn-sm" onclick="resetData()" style="color:var(--coral-d);border-color:var(--coral)" title="Réinitialiser toutes les données">↺ Reset</button>
+  </div>
+</div>
+
+<div id="import-section">
+  <div class="alert-info">Glisse le fichier .docx du carnet de bord d'un jeune ici. Les dates et annotations sont détectées automatiquement.</div>
+  <div class="drop-zone" id="drop-zone"
+    onclick="document.getElementById('file-input').click()"
+    ondragover="event.preventDefault();this.classList.add('over')"
+    ondragleave="this.classList.remove('over')"
+    ondrop="handleDrop(event)">
+    <div class="drop-zone-icon">📂</div>
+    <div style="font-size:13px;font-weight:500;margin-bottom:4px">Clique ou glisse un fichier .docx</div>
+    <div style="font-size:11px;color:var(--text2)">Carnet de bord d'un jeune</div>
+  </div>
+  <input type="file" id="file-input" accept=".docx" style="display:none" onchange="handleFile(this.files[0])">
+  <div id="import-status" style="display:none;margin-top:10px">
+    <div style="font-size:12px;color:var(--text2)" id="import-status-text">Lecture…</div>
+    <div class="prog-wrap"><div class="prog-fill" id="import-progress-fill" style="width:0%"></div></div>
+  </div>
+  <div id="import-preview" style="display:none;margin-top:10px"></div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="search" placeholder="Rechercher…" id="search-input" oninput="renderSidebar()">
+      </div>
+    </div>
+    <div class="sidebar-list" id="sidebar-list"></div>
+  </div>
+
+  <div class="main" id="main-panel">
+    <div id="empty-state">
+
+      <!-- HERO -->
+      <div style="text-align:center;padding:28px 16px 20px;border-bottom:1px solid var(--border);margin-bottom:20px">
+        <div style="width:56px;height:56px;background:var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px">🍳</div>
+        <div style="font-size:20px;font-weight:600;margin-bottom:4px">Suivi Cuisine — MNA</div>
+        <div style="font-size:12px;color:var(--text2)">Formateur Yvan · EVAM</div>
+      </div>
+
+      <!-- IMPORT ZONE -->
+      <div style="max-width:480px;margin:0 auto;padding:0 8px">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:10px">Importer un carnet de bord</div>
+        <div id="home-drop-zone"
+          style="border:2px dashed var(--border);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;background:var(--bg2);transition:all .2s"
+          onclick="document.getElementById('home-file-input').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--green)';this.style.background='var(--green-l)'"
+          ondragleave="this.style.borderColor='var(--border)';this.style.background='var(--bg2)'"
+          ondrop="homeDrop(event)">
+          <div style="font-size:32px;margin-bottom:10px">📂</div>
+          <div style="font-size:14px;font-weight:500;margin-bottom:4px;color:var(--text)">Glisse ton fichier .docx ici</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:14px">ou clique pour choisir un fichier</div>
+          <button class="btn-green btn-sm" onclick="event.stopPropagation();document.getElementById('home-file-input').click()">Choisir un fichier .docx</button>
+        </div>
+        <input type="file" id="home-file-input" accept=".docx" style="display:none" onchange="handleFile(this.files[0])">
+
+        <div id="home-import-status" style="display:none;margin-top:10px"></div>
+        <div id="home-import-preview" style="display:none;margin-top:10px"></div>
+
+        <!-- OU CRÉER -->
+        <div style="display:flex;align-items:center;gap:10px;margin:16px 0">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <div style="font-size:11px;color:var(--text2)">ou</div>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+        <button onclick="openNewJeune()" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--white);font-size:13px;cursor:pointer;color:var(--text)">
+          ➕ Créer un nouveau profil manuellement
+        </button>
+
+        <!-- JEUNES EXISTANTS -->
+        <div style="margin-top:20px">
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px">Profils existants</div>
+          <div id="home-jeunes-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"></div>
+        </div>
+      </div>
+
+    </div>
+    <div id="jeune-panel" style="display:none"></div>
+  </div>
+</div>
+
+<!-- MODAL NOUVEAU JEUNE -->
+<div class="overlay" id="modal-new-jeune">
+  <div class="modal">
+    <div class="modal-title">Nouveau jeune</div>
+    <div class="g2" style="margin-bottom:10px">
+      <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:3px">Prénom *</label><input type="text" id="nj-prenom" placeholder="Prénom"></div>
+      <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:3px">Nom complet</label><input type="text" id="nj-nom" placeholder="Nom"></div>
+      <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:3px">Date de naissance</label><input type="date" id="nj-ddn"></div>
+      <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:3px">Date d'arrivée</label><input type="date" id="nj-arrivee"></div>
+      <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:3px">Référente</label><input type="text" id="nj-ref" placeholder="Référente"></div>
+      <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:3px">N° dossier</label><input type="text" id="nj-dossier" placeholder="CSS / N°"></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-green" onclick="addJeune()">Créer le profil</button>
+      <button onclick="closeModal('modal-new-jeune')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CUISINE_D=['Initiation cuisine','Techniques de base','Hygiène & sécurité','Repas collectifs','Recettes du monde'];
+const AUTO_D=['Préparation autonome','Menus équilibrés','Courses & budget','Gestion des repas','Conservation / hygiène'];
+const SKILLS_D=['Couper / éplucher','Cuisson à la poêle','Cuisson au four','Assaisonnement','Présentation du plat','Gérer son poste','Respecter les temps','Lire une recette','Nettoyage / rangement','Travail propre & ordonné'];
+const ADMIN_C=['Dossier M-Files','Convention signée','Objectifs fixés','Finalisation PERI','Projet de vie'];
+const COMPORT_C=['Ponctualité','Implication','Travail en équipe','Autonomie générale','Communication'];
+const PALETTE=['#1D9E75','#185FA5','#BA7517','#D85A30','#534AB7','#993556','#3B6D11','#993C1D','#0891B2','#7C3AED'];
+
+let DB={}, currentJeune=null, tempTags=[], editingIdx=null;
+let deferredPrompt=null;
+
+// PWA install
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault(); deferredPrompt=e;
+  document.getElementById('install-banner').style.display='flex';
+});
+function installApp(){
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('install-banner').style.display='none';});}
+}
+
+// Manifest inline
+const manifest={name:'Suivi Cuisine MNA',short_name:'Cuisine MNA',start_url:'.',display:'standalone',background_color:'#FAFAF8',theme_color:'#1D9E75',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🍳</text></svg>',sizes:'any',type:'image/svg+xml'}]};
+const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+document.getElementById('manifest-link').href=URL.createObjectURL(blob);
+
+function loadDB(){
+  // Charge directement les données — pas de localStorage
+  loadDefaults();
+}
+
+
+function resetData(){
+  if(!confirm('Réinitialiser toutes les données ?\n\nCela recharge les profils de départ (Abdi Kaadir, Manal, Abdalla, Qaher).\nVos autres profils seront supprimés.'))return;
+  DB={};currentJeune=null;
+  loadDefaults();
+  document.getElementById('jeune-panel').style.display='none';
+  document.getElementById('empty-state').style.display='block';
+  document.getElementById('btn-export').style.display='none';
+  renderSidebar();
+  alert('Données réinitialisées — Abdi Kaadir, Manal, Abdalla et Qaher rechargés.');
+}
+function saveDB(){/* données en mémoire uniquement */}
+
+function makeProfile(prenom,nom,ddn,arrivee,ref,dossier){
+  return{prenom,nom,ddn,arrivee,ref,dossier,
+    ateliers:{cuisine:CUISINE_D.map(n=>({name:n,fait:false,valide:false})),auto:AUTO_D.map(n=>({name:n,fait:false,valide:false}))},
+    skills:SKILLS_D.map(n=>({name:n,level:0})),
+    adminChecks:ADMIN_C.map(n=>({name:n,done:false})),
+    comportChecks:COMPORT_C.map(n=>({name:n,level:0,note:''})),
+    entries:[],obs_generale:'',evo_positives:[],pts_consolider:[],synthese:'',pays:'',langue:'Somali',coref:'',formateur:'Yvan'};
+}
+
+function getDefaults(){
+  const DB_temp={};
+  (function(){
+    const DB=DB_temp;
+  const a=makeProfile('Abdi Kaadir','Noor Mohamed Cabdi Qaadir','2009-02-14','2024-12-10','Lara','CSS 84924640');
+  a.ateliers.cuisine=CUISINE_D.map(n=>({name:n,fait:true,valide:true}));
+  a.ateliers.auto=AUTO_D.map((n,i)=>({name:n,fait:true,valide:i!==2}));
+  a.skills=SKILLS_D.map((n,i)=>({name:n,level:i<2||i>=5?3:2}));
+  a.entries=[
+    {date:'2025-12-11',tags:['Arrivée','Repas','Attitude'],
+     text:"Arrivé depuis 1 jour. Voulait manger tout de suite — plus faim au moment du repas.\n\nLe lendemain voulait encore manger, servi directement. Devait faire les courses mais a préféré boire un chaï et remonter dans son appart. Pas de courses ce jour.\n\nInitiation pâtes + micro-ondes donné. Dès le vendredi voulait utiliser le four — s'adapte vite."},
+    {date:'2025-12-17',tags:['Cuisine','Riz','Don naturel'],
+     text:"Riz à la perfection ! Proposé une salade pour l'équilibre.\n\nTellement content de savoir cuisiner qu'il a fait un grand check et remercié chaleureusement. M'a fait chaud au cœur.\n\nEn 1 semaine et demie : riz, pommes de terre, légumes, viande hachée. Invite déjà les voisins somaliens pour manger ensemble. Je le vois bien devenir cuisinier."},
+    {date:'2025-12-23',tags:['Leadership','Collectif','Rangement'],
+     text:"Cabdi prend le lead dans la cuisine. Gère la déchetterie et le rangement correctement. Maktar est venu chez eux — se sent mieux là-bas."},
+    {date:'2026-01-20',tags:['Courses','Portrait','Cuisine'],
+     text:"Courses ensemble — rapide, à l'écoute. Patates douces grillées, chou-fleur au beurre, ragout bœuf paprika.\n\nUne crème de jeune homme — toujours souriant, prêt à apprendre. Cuisine pour les amis : Shermake, Caher, Abdallah, Nimco, Sabirin. Vrai plaisir."},
+    {date:'2026-03-09',tags:['Atelier','Repas collectif','Rangement'],
+     text:"Soupe courge/lentilles corail + rôti agneau + cake. Lave-vaisselle HS.\n\nRepas avec Lara, Zinzenide, Ahmed, Muktar, Almaskhan. Cabdi a tout lavé à la main, Abdallah a fait le balai. Belle entente. Accent sur tri et rangement."},
+    {date:'2026-03-19',tags:['Cuisine','Progression'],
+     text:"Poitrine au four + pommes de terre + gâteau. Tout bien fait et bon — belle dextérité. Sympa, accueillant, rigolo, positif."},
+    {date:'2026-03-25',tags:['Ponctualité','À surveiller'],
+     text:"Ne vient pas ramener l'argent — 20 min d'attente. Téléphone à des amis. 3 appels sans réponse. Pas de courses."},
+    {date:'2026-04-21',tags:['Pizza','Congé','Collectif'],
+     text:"Congé pour toute la clique de Chavannes — pizza avec la machine à pain."},
+    {date:'2026-05-19',tags:['Colloque','Bilan','Progression'],
+     text:"Réseau + colloque jeune (UTEA, Elsa). Content d'avoir appris à cuisiner — roi du riz, tout le monde mange chez lui. Potentiel énorme — apprentissage ou travail en cuisine à envisager sérieusement."},
+    {date:'2026-06-08',tags:['Cuisine','Pâtes','Progression'],
+     text:"Pâtes épinards crème poulet + gâteau 4 quarts. Maîtrise les pâtes — prochaine fois bolognaise. Idée : visite d'un restaurant italien."},
+  ];
+  DB['Abdi Kaadir']=a;
+  const m=makeProfile('Manal','Abdirashid Guled Manal','2009-02-07','2025-02-23','Me Kacou Apo Geneviève','N 886477');
+  m.ateliers.cuisine=CUISINE_D.map(n=>({name:n,fait:true,valide:true}));
+  m.ateliers.auto=AUTO_D.map((n,i)=>({name:n,fait:true,valide:i!==2}));
+  m.skills=SKILLS_D.map((n,i)=>({name:n,level:i===3||i===7?2:3}));
+  m.entries=[
+    {date:'2025-02-23',tags:['Arrivée','Autonomie'],text:"Arrivée le 23.02. Fait la lessive seule. 3 mots de français. Veut cuisiner des pâtisseries."},
+    {date:'2025-03-16',tags:['Pâtisserie','Bonne humeur'],text:"Gaufres, crème vanille pâtissière, crêpes. Rigole et chante beaucoup. Très agréable."},
+    {date:'2025-03-23',tags:['Beignets','Repas collectif'],text:"Beignets + repas collectif — invité Ségo, Edwin, Iryna, Nimco, Entsar. Un peu trop salé."},
+    {date:'2025-03-30',tags:['Vigilance','État émotionnel'],text:"Terrée au fond de son lit, ne veut pas sortir. Peut-être déprimée ? À surveiller et signaler."},
+    {date:'2025-04-21',tags:['Malawa','Bonne nouvelle'],text:"Malawa + frites + thon. Pourra aller chez son oncle à partir du 1er mai."},
+  ];
+  DB['Manal']=m;
+
+  // ── ABDALLA ──
+  const ab=makeProfile('Abdalla','Hassan Nur Abdalla','2009-08-26','2025-11-27','Abdelkrim','N 879718');
+  ab.ateliers.cuisine=[
+    {name:'Initiation cuisine',     fait:true, valide:false},
+    {name:'Techniques de base',     fait:true, valide:true},
+    {name:'Hygiène & sécurité',     fait:true, valide:false},
+    {name:'Repas collectifs',       fait:true, valide:true},
+    {name:'Recettes du monde',      fait:true, valide:false},
+    {name:'Pâtisserie & pain',      fait:true, valide:false},
+  ];
+  ab.ateliers.auto=[
+    {name:'Préparation autonome',   fait:true, valide:false},
+    {name:'Menus équilibrés',       fait:true, valide:false},
+    {name:'Courses & budget',       fait:true, valide:false},
+    {name:'Gestion des repas',      fait:true, valide:false},
+    {name:'Conservation / hygiène', fait:true, valide:false},
+  ];
+  ab.skills=[
+    {name:'Couper / éplucher',              level:2},
+    {name:'Cuisson à la poêle / friture',   level:2},
+    {name:'Cuisson au four',                level:2},
+    {name:'Assaisonnement',                 level:2},
+    {name:'Présentation du plat',           level:1},
+    {name:'Gérer son poste de travail',     level:2},
+    {name:'Respecter les temps de cuisson', level:1},
+    {name:'Lire & suivre une recette',      level:1},
+    {name:'Nettoyage / rangement',          level:2},
+    {name:'Travail propre & ordonné',       level:2},
+  ];
+  ab.adminChecks=[
+    {name:'Dossier M-Files',   done:true},
+    {name:'Convention signée', done:true},
+    {name:'Objectifs fixés',   done:false},
+    {name:'Finalisation PERI', done:false},
+    {name:'Projet de vie',     done:false},
+  ];
+  ab.comportChecks=[
+    {name:'Ponctualité',       level:1, note:'Oublié RDV Suman & Abdelkrim le 25.03'},
+    {name:'Implication',       level:2, note:'Attentif et engagé en cuisine'},
+    {name:'Travail en équipe', level:2, note:'Bonne dynamique avec Qaher'},
+    {name:'Autonomie générale',level:1, note:'Encore besoin d\'encadrement — encadrement soutenu nécessaire'},
+    {name:'Communication',     level:1, note:'Discret, en retrait, exprime peu ses besoins'},
+  ];
+  ab.entries=[
+    {date:'2025-11-27', tags:['Arrivée','Repas collectif','Discret'],
+     text:"Arrivée le jeudi 27. Grand repas collectif d'accueil : kebap, poitrine d'agneau au four, cevabchichi, soupe, légumes cuits, galettes tacos, salade. Belle tablée conviviale à volonté.\n\nHassan est resté assez en retrait, fatigué, parti avant de pouvoir saluer tout le monde."},
+    {date:'2025-12-01', tags:['Cuisine','Pâtes','Co-référent'],
+     text:"Cuisine avec son co-référent Alain : pâtes aux œufs et tomate. Bien que ce soit le co-ref qui a pris l'initiative — ça fait plaisir qu'un référent fasse un peu de cuisine."},
+    {date:'2025-12-02', tags:['Cuisine','Courses','Repas collectif','Technique'],
+     text:"Assemblée de maison. Courses ensemble : prend le minimum, fruits, légumes, peu de viande. Respectueux, gentil, très calme. RDV dentiste le même jour.\n\nAprès rangement et mise en place, achat d'épices pour qu'il assaisonne comme il faut. Désossage du poulet, pané à la maïzena, frit — fait ça parfaitement, de la meilleure façon possible. Coupe patates et marrons (dangereux — vigilance). Soupe à la courge en accompagnement.\n\nBonne dynamique avec Qaher depuis son arrivée — courses et repas en commun, très bonne énergie."},
+    {date:'2026-01-14', tags:['Cuisine','Hamburger','Pâtisserie','Collectif'],
+     text:"Jour de pause cuisine. Abdallah veut faire des hamburgers — début à 17h. Réalisation du pain à hamburger ensemble. Mis à disposition un livre sur les hamburgers végétariens pour élargir ses idées.\n\nProfité pour montrer à Hamsa (colocataire) la cuisson des pois chiches avec légumes. Moment convivial et pédagogique.\n\nAccompagné Abdallah dans la réalisation de la mayonnaise maison — il apprécie particulièrement.\n\nObservation : attentif, respectueux du cadre, envie de bien faire, calme et posé. Très attentif en cuisine, forte volonté d'apprendre. Un peu en retrait avec les autres jeunes."},
+    {date:'2026-02-23', tags:['Humour','Note'],
+     text:"Marrant — je lui ai dit de dire 'pousse-toi' à Cadir pour faire de la place et il a tout de suite assimilé, il le redit constamment."},
+    {date:'2026-02-24', tags:['Rangement','Tension','À surveiller'],
+     text:"Demandé aux 2 de l'appart de nettoyer correctement leur cuisine suite à visite de la gérance — pas été fait. Agacement chronique de Cabdi Cadir de devoir tout gérer avec Abdallah, principalement la tenue de la cuisine. Classeur appart n°3 à disposition."},
+    {date:'2026-03-11', tags:['Courses','Budget','Attention'],
+     text:"Courses avec Abdallah — fait un mic-mac avec ses tickets. Attention : lui donner le jour des courses l'argent exact. Surveiller retour des courses et rangement. Avec la calculette il est précis."},
+    {date:'2026-03-25', tags:['Ponctualité','À surveiller'],
+     text:"Tête en l'air aux courses, a oublié qu'il avait un RDV avec Suman et Abdelkrim.\n\nJeune nécessitant un encadrement soutenu — autonomie à développer progressivement. Présence et suivi régulier recommandés."},
+    {date:'2026-04-15', tags:['Cuisine','Rangement','Progression'],
+     text:"Abdallah en vacances — profité pour faire un vide frigo et nettoyage de la cuisine en général. Il a bien évolué en gestion cuisine. À améliorer : le nettoyage."},
+    {date:'2026-04-22', tags:['Cuisine','Rangement','Nutrition','Progression'],
+     text:"Abdallah dormait l'après-midi — fatigué. Ensuite rangé la cuisine, trié les épices et légumes, nettoyé le frigo. Cadir un peu gavé de ne pas avoir à manger et de tout faire — avait mis viande et riz tacitement. On a fait une sauce curry légumes avec les restes.\n\nExpliqué la nutrition chez les ados, l'importance des légumes. Fait la liste de courses avec prix des ingrédients, passé en revue tous les produits avec photos et légumes.\n\nA bien compris — fait de la viande au four avec patates et pain. Très perspicace, manque un peu d'assurance et de connaissances."},
+  ];
+  ab.obs_generale="Abdallah est un jeune calme, respectueux et discret. Initialement en retrait, il s'implique désormais davantage dans les activités, notamment en cuisine où il montre un réel intérêt et une bonne capacité d'apprentissage.";
+  ab.evo_positives=["Participation active et régulière en cuisine","Réalisation de préparations variées (poulet, pain, mayonnaise, plats complets)","Meilleure compréhension de l'alimentation et du rôle des légumes","Capacité à cuisiner avec les restes (logique anti-gaspillage)","Implication dans le rangement et le nettoyage accompagné","Meilleure intégration dans les temps collectifs via les activités"];
+  ab.pts_consolider=["Nettoyage et entretien à renforcer sans rappel","Organisation (rendez-vous, gestion des courses et de l'argent)","Prise d'initiative encore limitée","Tendance à l'oubli et à la distraction"];
+  ab.synthese="Évolution positive, en particulier dans les activités de cuisine où il développe des compétences concrètes et valorisantes. Il nécessite encore un accompagnement pour renforcer son autonomie, son organisation et sa régularité dans les tâches du quotidien.";
+  DB['Abdalla']=ab;
+
+  // ── QAHER ──
+  const q=makeProfile('Qaher','Arab, Abdul Qaher','2009-03-17','2025-12-04','','N 882833');
+  q.pays='Afghanistan';q.langue='Dari';
+  q.ateliers.cuisine=[
+    {name:'Initiation cuisine',fait:true,valide:false,note:"Riz + poulet — 1ère tentative 11.12"},
+    {name:'Techniques de base',fait:true,valide:false,note:"1ère coupe oignons (pleurs !), kabuli riz — 26.01"},
+    {name:'Hygiène & sécurité',fait:false,valide:false,note:''},
+    {name:'Repas collectifs',fait:false,valide:false,note:''},
+    {name:'Recettes du monde',fait:true,valide:false,note:"Kabuli (riz afghan) — 26.01"},
+    {name:'Pâtisserie & gâteaux',fait:true,valide:false,note:"Gâteau anniversaire + cuisson autonome dimanche"},
+  ];
+  q.ateliers.auto=[
+    {name:'Préparation autonome',fait:true,valide:false,note:"Pâtes tomate + frites seul — 15.04"},
+    {name:'Menus équilibrés',fait:false,valide:false,note:'À développer'},
+    {name:'Courses & budget',fait:false,valide:false,note:''},
+    {name:'Gestion des repas',fait:true,valide:false,note:"Bon sens de l'organisation — 15.04"},
+    {name:'Conservation / hygiène',fait:false,valide:false,note:''},
+  ];
+  q.skills=[
+    {name:'Couper / éplucher',level:1,obs:"1ère coupe oignons — pleurs, à répéter"},
+    {name:'Cuisson à la poêle / friture',level:1,obs:"Frites maîtrisées seul — 15.04"},
+    {name:'Cuisson au four',level:1,obs:"Gâteau cuit seul dimanche"},
+    {name:'Assaisonnement',level:0,obs:'À travailler'},
+    {name:'Présentation du plat',level:0,obs:'À développer'},
+    {name:'Gérer son poste de travail',level:1,obs:"Bon sens de l'organisation noté le 15.04"},
+    {name:'Respecter les temps de cuisson',level:1,obs:"Gère son temps — pâtes 5 min avant école"},
+    {name:'Lire & suivre une recette',level:0,obs:"Barrière linguistique — à accompagner"},
+    {name:'Nettoyage / rangement',level:0,obs:'Non évalué'},
+    {name:'Travail propre & ordonné',level:1,obs:"Positif et souriant, bonne attitude"},
+  ];
+  q.adminChecks=[
+    {name:'Dossier M-Files',done:true,note:'N 882833'},
+    {name:'Convention signée',done:false,note:''},
+    {name:'Objectifs fixés',done:false,note:'Cuisine & autonomie à définir'},
+    {name:'Finalisation PERI',done:false,note:'En cours'},
+    {name:'Projet de vie',done:false,note:'À construire'},
+  ];
+  q.comportChecks=[
+    {name:'Ponctualité',level:1,note:"Tenté de s'esquiver pour un Red Bull le 11.12"},
+    {name:'Implication',level:1,note:"Dit oui sans comprendre — barrière langue. Progresse"},
+    {name:'Travail en équipe',level:2,note:"Gentil avec Muktar, bonne dynamique"},
+    {name:'Autonomie générale',level:1,note:"Pâtes + frites seul le 15.04 — bonne initiative"},
+    {name:'Communication',level:1,note:"Dari uniquement — utilise Google Translate"},
+  ];
+  q.entries=[
+    {date:'2025-12-11',tags:['Cuisine','Première séance','Humour'],
+     text:"Discussion via Google Translate — il comprend qu'on va cuisiner ensemble le soir. Mis du riz à gonfler, donné 1 kg de poulet.
+
+Au moment de commencer, il préférait aller s'acheter un Red Bull... C'était aussi notre souper d'équipe — on verra bien."},
+    {date:'2026-01-26',tags:['Cuisine','Technique','Premiers apprentissages'],
+     text:"Qaher a accepté de cuisiner — il dit souvent oui sans avoir compris (barrière de la langue).
+
+1ère fois qu'il coupe des oignons — il pleure ! 1ère fois du kabuli (riz afghan) — très compliqué.
+
+On avance doucement."},
+    {date:'2026-03-17',tags:['Anniversaire','Pâtisserie','Ramadan'],
+     text:"Anniversaire de ses 17 ans.
+
+Veut apporter un gâteau à l'école le lundi — c'est le Ramadan, il finit vendredi. Plan : gâteau ensemble à Payerne, et un 2ème qu'il cuit tout seul dimanche pour l'apporter lundi à l'école."},
+    {date:'2026-04-15',tags:['Cuisine','Autonomie','Progression'],
+     text:"A cuisiné des pâtes à la tomate et sait se faire des frites — 5 minutes avant de partir à l'école. Beau sens de l'organisation.
+
+Toujours souriant et positif, gentil avec Muktar, pas revendicateur.
+
+À explorer : ce qu'il aime vraiment cuisiner."},
+  ];
+  q.obs_generale="Qaher est un jeune souriant, positif et de bonne volonté. La barrière linguistique (dari) rend les échanges complexes mais il s'adapte avec Google Translate. Il progresse doucement en cuisine avec une belle initiative le 15 avril.";
+  q.evo_positives=["Première cuisson autonome réussie (pâtes, frites) le 15.04","Bon sens de l'organisation et de la gestion du temps","Attitude positive et souriante en toutes circonstances","Bonne relation avec Muktar — dynamique collective agréable","Gâteau d'anniversaire réalisé seul pour l'école"];
+  q.pts_consolider=["Barrière linguistique — renforcer le suivi avec traducteur","Techniques de base à consolider (coupe, assaisonnement)","Élargir le répertoire culinaire","Implication à développer — tendance à acquiescer sans comprendre"];
+  q.synthese="Progression modeste mais régulière. Qaher montre une bonne volonté et une autonomie naissante. Le principal obstacle reste la langue. À encourager et accompagner sur les bases culinaires.";
+  DB['Qaher']=q;
+
+  // ── ABDUL SAME ──
+  const as=makeProfile('Abdul Same','Abdul Same','','','','');
+  as.pays='Afghanistan';as.langue='Dari';
+  as.ateliers.cuisine=[
+    {name:'Initiation cuisine',     fait:true, valide:false, note:'4 quarts avec noisettes le 05.01 — peu attentif mais présent'},
+    {name:'Techniques de base',     fait:true, valide:false, note:'Galettes pommes de terre râpées — geste désinvolte le 15.01'},
+    {name:'Hygiène & sécurité',     fait:true, valide:false, note:'Ouvre le four pendant cuisson — explication nécessaire'},
+    {name:'Repas collectifs',       fait:true, valide:true,  note:'Kabuli pour 15 personnes le 29.02 — très professionnel et grande dextérité'},
+    {name:'Recettes du monde',      fait:true, valide:true,  note:'Kabuli afghan maîtrisé, gormeth sabzi + riz le 03.12'},
+    {name:'Pâtisserie & gâteaux',   fait:true, valide:false, note:'Gâteau anniversaire oranges + crème fouettée le 03.12. Glaçage sucre glace citron'},
+  ];
+  as.ateliers.auto=[
+    {name:'Préparation autonome',   fait:true, valide:false, note:'Poulet citron préparé seul le 05.01 — très bon'},
+    {name:'Menus équilibrés',       fait:false,valide:false, note:'À travailler'},
+    {name:'Courses & budget',       fait:true, valide:false, note:'Courses à Moudon avec Noor — correct'},
+    {name:'Gestion des repas',      fait:true, valide:false, note:'Tendance à jeter les restes (500g viande à la poubelle — stoppé)'},
+    {name:'Conservation / hygiène', fait:false,valide:false, note:'Lave-vaisselle : ignore les consignes (sel régénérant, rince-éclat)'},
+  ];
+  as.skills=[
+    {name:'Couper / éplucher',              level:2, obs:'Galettes pommes de terre râpées — technique OK'},
+    {name:'Cuisson à la poêle / friture',   level:2, obs:'Légumes sautés, poulet — maîtrisé'},
+    {name:'Cuisson au four',                level:1, obs:'Ouvre le four pendant cuisson — à corriger'},
+    {name:'Assaisonnement',                 level:2, obs:'Kabuli bien assaisonné, gormeth sabzi réussi'},
+    {name:'Présentation du plat',           level:1, obs:'Glaçage chocolat tenté — résultat à améliorer'},
+    {name:'Gérer son poste de travail',     level:1, obs:'Désinvolte par moments — à encourager'},
+    {name:'Respecter les temps de cuisson', level:1, obs:'Impatient — intervient avant la fin'},
+    {name:'Lire & suivre une recette',      level:2, obs:'A suivi et peut-être reproduit la recette gormeth sabzi — 03.12'},
+    {name:'Nettoyage / rangement',          level:1, obs:'Aide à la vaisselle quand motivé — pas systématique'},
+    {name:'Travail propre & ordonné',       level:1, obs:'Variable selon son humeur et sa motivation du jour'},
+  ];
+  as.adminChecks=[
+    {name:'Dossier M-Files',   done:false, note:''},
+    {name:'Convention signée', done:false, note:''},
+    {name:'Objectifs fixés',   done:false, note:'PA cuisine à formaliser'},
+    {name:'Finalisation PERI', done:false, note:''},
+    {name:'Projet de vie',     done:false, note:''},
+  ];
+  as.comportChecks=[
+    {name:'Ponctualité',        level:2, note:'Présent et demande activement les activités'},
+    {name:'Implication',        level:1, note:'Variable — très engagé parfois, désinvolte autres fois'},
+    {name:'Travail en équipe',  level:1, note:'Attitude négative lors du Ramadan (21.03) — dissipée ensuite'},
+    {name:'Autonomie générale', level:2, note:'Cuisine seul quand motivé — poulet citron excellent'},
+    {name:'Communication',      level:2, note:'Sympa et rigolo en général — peut devenir revendicateur (PA, argent)'},
+  ];
+  as.entries=[
+    {date:'2024-01-05', tags:['Pâtisserie','Cuisine','Bonne humeur'],
+     text:"Vendredi après-midi pendant les vacances. Abdul Same voulait un gâteau avec son nom dessus.
+
+Avec peu de conviction de sa part, on a fait un 4 quarts en expliquant les ingrédients — plus ou moins attentif, ne faisait pas grand-chose (Obaidullah parlait fort à côté, télé allumée).
+
+J'ai d'abord fait des légumes sautés et du poulet avec des restes. Ensuite il m'a invité à goûter son poulet au citron qu'il avait préparé seul — c'était très bon.
+
+Gâteau 4 quarts avec noisettes — n'a pas bien levé car il a ouvert le four pendant la cuisson. Glaçage beurre fouetté citron, sucre glace, raisins rouges. Écriture en chocolat — raté puis rattrapé ensemble.
+
+Abdul a aidé à ranger et faire la vaisselle. Très agréable. Intelligent, beaucoup de potentiel."},
+    {date:'2024-01-15', tags:['Cuisine','Motivation','À surveiller'],
+     text:"Lundi difficile. Donné l'argent pour Almas, acheté viande halal (osso bucco) 14 CHF à la boucherie.
+
+Comme il était sur ses devoirs je n'ai pas insisté — j'ai cuisiné, lui ai demandé de finir une cuisson. Il a pris les pommes de terre de façon désinvolte et les a jetées dans la plaque.
+
+Pas très volontaire ce jour-là. À reprendre."},
+    {date:'2024-02-29', tags:['Cuisine','Collectif','Excellente séance'],
+     text:"Anniversaire d'Obaidullah. Abdul Same a cuisiné un kabuli pour 15 personnes de façon très professionnelle, avec beaucoup de dextérité. Pas exactement la même recette que je connais mais le résultat est quasi identique.
+
+Pour les desserts, ce n'est pas encore son fort — il n'est pas trop sucré."},
+    {date:'2024-03-21', tags:['Ramadan','Repas collectif','Tension'],
+     text:"Rôti de bœuf à la broche (cou de bœuf mariné). Courses à Moudon avec Noor.
+
+Abdul m'a appelé en mode urgent — repas Ramadan à 18h49. Je me suis dépêché.
+
+Arrivé chez lui, il a vaguement aidé, réclamant son inscription PA cuisine — j'ai eu l'impression que seul l'argent lui importait. Attitude plutôt négative pendant toute la préparation.
+
+Après le repas (mangé en 10 minutes), le surveillant a stoppé Abdul qui voulait jeter 500g de viande restante à la poubelle.
+
+Attitude négative dissipée 30 min plus tard — est revenu remercier pour la vaisselle.
+
+Point de friction avec Iman pour une casserole sale — Abdul n'a pas voulu la nettoyer."},
+    {date:'2024-12-03', tags:['Anniversaire','Pâtisserie','Cuisine'],
+     text:"Anniversaire de Mehran. Abdul m'a aidé à préparer un gâteau d'anniversaire (oranges, crème fouettée) + gormeth sabzi + riz.
+
+A demandé au moins 10 fois d'avoir plus de 2 PA — veut gratter de l'argent sans arrêt.
+
+A bien cuisiné — a regardé la recette, l'a suivie, et pourrait peut-être la reproduire seul."},
+    {date:'2025-11-05', tags:['Hygiène','À surveiller','Consignes'],
+     text:"Demandé à plusieurs reprises de mettre sel régénérant et rince-éclat dans le lave-vaisselle.
+
+Manifestement prend plaisir à ne pas suivre les consignes. Manque de levier pour apprendre ou se conformer — attitude à surveiller."},
+    {date:'2026-02-03', tags:['Cuisine','Progression','Bonne séance'],
+     text:"1ère fois que je recuisine avec Abdul Same depuis longtemps. Lave-vaisselle HS — réparé.
+
+Pâtes rapides avec poulet mariné de Saleem et légumes. Il était content et apaisé — différent des autres fois.
+
+Sa maîtresse de l'école en ligne de Moudon lui a demandé de venir vivre avec elle."},
+  ];
+  as.obs_generale="Abdul Same est un jeune au profil contrasté : capable d'une grande dextérité et d'un réel talent culinaire (kabuli pour 15 personnes, recettes afghanes maîtrisées), mais avec une motivation variable et une tendance à être revendicateur sur les PA et l'argent. Quand il est bien disposé, c'est un partenaire de cuisine agréable et intelligent.";
+  as.evo_positives=["Kabuli pour 15 personnes réalisé de façon très professionnelle (29.02)","Poulet citron préparé seul avec excellente maîtrise","Gormeth sabzi + riz réussi et potentiellement reproductible","Participation aux repas collectifs — cuisine pour le groupe","Aide à la vaisselle et au rangement quand motivé"];
+  as.pts_consolider=["Motivation fluctuante — très variable selon les jours","Tendance revendicatrice sur les PA et l'argent à recadrer avec bienveillance","Gestion des restes alimentaires (ne pas jeter)","Respect des consignes d'entretien (lave-vaisselle)","Régularité et implication dans les ateliers"];
+  as.synthese="Potentiel culinaire réel et avéré — Abdul Same peut cuisiner à haut niveau quand il est motivé. L'enjeu principal est de stabiliser son implication et de travailler sur sa relation à l'effort et aux règles, sans perdre la relation de confiance qui s'est construite dans les bons moments.";
+  DB['Abdul Same']=as;
+
+  })();
+  return DB_temp;
+}
+
+function loadDefaults(){
+  const defaults=getDefaults();
+  Object.assign(DB,defaults);
+  saveDB();
+}
+
+const avatarColor=n=>PALETTE[Math.abs([...n].reduce((a,c)=>a+c.charCodeAt(0),0))%PALETTE.length];
+const initials=n=>n.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+
+function renderSidebar(){
+  const q=(document.getElementById('search-input').value||'').toLowerCase();
+  const list=document.getElementById('sidebar-list');
+  list.innerHTML='';
+  const keys=Object.keys(DB).filter(k=>k.toLowerCase().includes(q));
+  document.getElementById('topbar-count').textContent=Object.keys(DB).length+' jeune'+(Object.keys(DB).length>1?'s':'');
+  keys.forEach(name=>{
+    const j=DB[name];
+    const tA=j.ateliers.cuisine.length+j.ateliers.auto.length;
+    const dA=j.ateliers.cuisine.filter(x=>x.fait).length+j.ateliers.auto.filter(x=>x.fait).length;
+    const pct=tA?Math.round(dA/tA*100):0;
+    const warn=j.entries.some(e=>(e.tags||[]).some(t=>/(vigilance|déprim|surveill|absent)/i.test(t)));
+    const d=document.createElement('div');
+    d.className='jeune-item'+(currentJeune===name?' active':'');
+    d.innerHTML=`<div class="avatar" style="background:${avatarColor(name)}22;color:${avatarColor(name)}">${initials(name)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="jeune-name">${name}</span>
+          ${warn?'<span style="width:6px;height:6px;background:var(--amber);border-radius:50%;flex-shrink:0"></span>':''}
+        </div>
+        <div class="jeune-meta">${pct}% · ${j.entries.length} note${j.entries.length!==1?'s':''}</div>
+      </div>`;
+    d.onclick=()=>selectJeune(name);
+    list.appendChild(d);
+  });
+  if(!keys.length) list.innerHTML='<div style="font-size:11px;color:var(--text2);padding:8px 4px">Aucun résultat</div>';
+}
+
+function selectJeune(name){
+  currentJeune=name;
+  document.getElementById('btn-export').style.display='';
+  renderSidebar();
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('jeune-panel').style.display='block';
+  renderJeunePanel();
+}
+
+function renderJeunePanel(){
+  const j=DB[currentJeune];
+  const p=document.getElementById('jeune-panel');
+  const tA=j.ateliers.cuisine.length+j.ateliers.auto.length;
+  const dA=j.ateliers.cuisine.filter(x=>x.fait).length+j.ateliers.auto.filter(x=>x.fait).length;
+  const acq=j.skills.filter(x=>x.level===3).length;
+  const pct=tA?Math.round(dA/tA*100):0;
+  const meta=[j.ref&&`Réf : ${j.ref}`,j.arrivee&&`Arrivée : ${fmtDate(j.arrivee)}`,j.dossier].filter(Boolean).join(' · ');
+
+  p.innerHTML=`
+  <div class="panel-header">
+    <div class="panel-avatar" style="background:${avatarColor(currentJeune)}22;color:${avatarColor(currentJeune)}">${initials(currentJeune)}</div>
+    <div>
+      <div style="font-size:16px;font-weight:600">${currentJeune}</div>
+      <div style="font-size:11px;color:var(--text2)">${meta||'—'}</div>
+    </div>
+    <button class="btn-sm btn-danger" style="margin-left:auto" onclick="deleteJeune()">Supprimer</button>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n" style="color:var(--green)">${dA}</div><div class="stat-l">Ateliers faits</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--amber)">${acq}</div><div class="stat-l">Compétences</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--blue)">${pct}%</div><div class="stat-l">Progression</div></div>
+  </div>
+  <div class="tabs" id="main-tabs">
+    <div class="tab active" onclick="showTab('synthese',this)">📋 Synthèse</div>
+    <div class="tab" onclick="showTab('carnet',this)">Carnet de bord</div>
+    <div class="tab" onclick="showTab('ateliers',this)">Ateliers</div>
+    <div class="tab" onclick="showTab('competences',this)">Compétences</div>
+    <div class="tab" onclick="showTab('admin',this)">Admin</div>
+  </div>
+  <div id="tab-synthese">${renderSyntheseHTML()}</div>
+  <div id="tab-carnet" style="display:none">${renderCarnetHTML()}</div>
+  <div id="tab-ateliers" style="display:none">${renderAteliersHTML()}</div>
+  <div id="tab-competences" style="display:none">${renderSkillsHTML()}</div>
+  <div id="tab-admin" style="display:none">${renderAdminHTML()}</div>`;
+
+  bindSynthese();bindCarnet();bindAteliers();bindSkills();bindAdmin();
+}
+
+function showTab(name,el){
+  ['synthese','carnet','ateliers','competences','admin'].forEach(t=>document.getElementById('tab-'+t).style.display=t===name?'block':'none');
+  document.querySelectorAll('#main-tabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── SYNTHÈSE ── */
+function renderSyntheseHTML(){
+  const j=DB[currentJeune];
+  const warn=j.entries&&j.entries.some(e=>(e.tags||[]).some(t=>/(vigilance|déprim|surveill|absent)/i.test(t)));
+  const evo=(j.evo_positives||[]);
+  const pts=(j.pts_consolider||[]);
+  return `
+  ${warn?'<div class="alert-warn" style="margin-bottom:10px">⚠ Point de vigilance dans le carnet de bord</div>':''}
+  <div class="card" style="border-top:3px solid var(--green);margin-bottom:10px">
+    <div style="padding-bottom:10px;margin-bottom:10px;border-bottom:0.5px solid var(--border)">
+      <div style="font-size:14px;font-weight:600;margin-bottom:3px">${escHtml(j.nom||currentJeune)}</div>
+      <div style="font-size:11px;color:var(--text2)">${[j.ddn&&'Né le '+fmtDate2(j.ddn),j.pays,'MNA'].filter(Boolean).join(' · ')}</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:2px">Réf : ${j.ref||'—'} | Co-réf : ${j.coref||'—'} | Arrivée : ${fmtDate(j.arrivee)||'—'}</div>
+    </div>
+    ${j.obs_generale?`<div style="font-size:10px;font-weight:600;color:var(--green-d);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">Observation générale</div>
+    <div style="font-size:12px;line-height:1.7">${escHtml(j.obs_generale)}</div>`:'<div style="font-size:12px;color:var(--text2);font-style:italic">Observation générale à compléter ↓</div>'}
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+    <div class="card" style="border-top:3px solid var(--green)">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--green-d);margin-bottom:8px">Évolutions positives</div>
+      ${evo.length?evo.map(e=>`<div style="display:flex;gap:6px;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:12px"><span style="color:var(--green);flex-shrink:0">→</span>${escHtml(e)}</div>`).join(''):'<div style="font-size:11px;color:var(--text2);font-style:italic">À compléter ↓</div>'}
+    </div>
+    <div class="card" style="border-top:3px solid var(--amber)">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--amber-d);margin-bottom:8px">Points à consolider</div>
+      ${pts.length?pts.map(p=>`<div style="display:flex;gap:6px;padding:4px 0;border-bottom:0.5px solid var(--border);font-size:12px"><span style="color:var(--amber);flex-shrink:0">→</span>${escHtml(p)}</div>`).join(''):'<div style="font-size:11px;color:var(--text2);font-style:italic">À compléter ↓</div>'}
+    </div>
+  </div>
+  ${j.synthese?`<div class="card" style="border-top:3px solid var(--blue);margin-bottom:10px">
+    <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--blue-d);margin-bottom:6px">Synthèse</div>
+    <div style="font-size:12px;line-height:1.7">${escHtml(j.synthese)}</div>
+  </div>`:''}
+  <div class="card" style="border-top:3px solid var(--gray-m)">
+    <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:10px">✏️ Rédiger / modifier</div>
+    <div style="display:grid;gap:8px">
+      <div><div style="font-size:11px;color:var(--text2);margin-bottom:3px">Observation générale</div>
+        <textarea style="min-height:60px;font-size:12px" id="syn-obs" placeholder="Description générale du jeune…">${escHtml(j.obs_generale||'')}</textarea></div>
+      <div><div style="font-size:11px;color:var(--text2);margin-bottom:3px">Évolutions positives <span style="font-weight:400">(une par ligne)</span></div>
+        <textarea style="min-height:70px;font-size:12px" id="syn-evo" placeholder="Participation active en cuisine&#10;Réalisation de préparations variées…"></textarea></div>
+      <div><div style="font-size:11px;color:var(--text2);margin-bottom:3px">Points à consolider <span style="font-weight:400">(une par ligne)</span></div>
+        <textarea style="min-height:70px;font-size:12px" id="syn-pts" placeholder="Nettoyage à renforcer&#10;Organisation et ponctualité…"></textarea></div>
+      <div><div style="font-size:11px;color:var(--text2);margin-bottom:3px">Synthèse globale</div>
+        <textarea style="min-height:60px;font-size:12px" id="syn-synth" placeholder="Résumé de l'évolution du jeune…">${escHtml(j.synthese||'')}</textarea></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-green btn-sm" onclick="saveSynthese()">Enregistrer</button>
+        <button class="btn-sm btn-green" onclick="exportCurrentPDF()" style="margin-left:auto">⬇ Exporter PDF</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function bindSynthese(){
+  const j=DB[currentJeune];
+  const e=document.getElementById('syn-evo');if(e)e.value=(j.evo_positives||[]).join('
+');
+  const p=document.getElementById('syn-pts');if(p)p.value=(j.pts_consolider||[]).join('
+');
+}
+
+function saveSynthese(){
+  const j=DB[currentJeune];
+  j.obs_generale=(document.getElementById('syn-obs')||{}).value||'';
+  j.evo_positives=((document.getElementById('syn-evo')||{}).value||'').split('
+').filter(s=>s.trim());
+  j.pts_consolider=((document.getElementById('syn-pts')||{}).value||'').split('
+').filter(s=>s.trim());
+  j.synthese=(document.getElementById('syn-synth')||{}).value||'';
+  saveDB();
+  document.getElementById('tab-synthese').innerHTML=renderSyntheseHTML();
+  bindSynthese();
+}
+
+/* ── CARNET ── */
+function renderCarnetHTML(){
+  const today=new Date().toISOString().slice(0,10);
+  const entries=[...DB[currentJeune].entries].map((e,i)=>({...e,_i:i})).sort((a,b)=>b.date.localeCompare(a.date));
+  const entriesHtml=entries.length?entries.map(e=>{
+    const warn=(e.tags||[]).some(t=>/(vigilance|déprim|surveill|absent)/i.test(t));
+    const tagsHtml=(e.tags||[]).map(t=>{
+      const cls=/(vigilance|déprim|surveill|absent)/i.test(t)?'tag-coral':/(cuisine|atelier|pâtiss)/i.test(t)?'tag-green':/(ponctualité|retard)/i.test(t)?'tag-amber':'tag-gray';
+      return `<span class="tag ${cls}">${t}</span>`;
+    }).join('');
+    return `<div class="entry${warn?' warn':''}">
+      <div class="entry-date">${fmtDate(e.date)}</div>
+      <div style="margin-bottom:6px">${tagsHtml}</div>
+      <div class="entry-text">${escHtml(e.text)}</div>
+      <div class="entry-actions">
+        <button class="btn-sm" onclick="editEntry(${e._i})">Modifier</button>
+        <button class="btn-sm btn-danger" onclick="deleteEntry(${e._i})">Supprimer</button>
+      </div></div>`;
+  }).join(''):'<div style="text-align:center;padding:2rem;color:var(--text2);font-size:12px">Aucune annotation</div>';
+  return `<div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Nouvelle annotation</div>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <input type="date" id="entry-date" value="${today}" style="max-width:150px">
+      <div style="flex:1;display:flex;flex-wrap:wrap;gap:4px;align-items:center" id="tag-pills"></div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <input type="text" id="new-tag" placeholder="Tag (ex: Cuisine, Vigilance…)" onkeydown="if(event.key==='Enter'){addTag();event.preventDefault()}">
+      <button class="btn-sm" onclick="addTag()">+ tag</button>
+    </div>
+    <textarea id="entry-text" placeholder="Écris ton annotation ici…"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn-green btn-sm" onclick="saveEntry()">Enregistrer</button>
+      <button class="btn-sm" onclick="clearForm()">Effacer</button>
+    </div>
+  </div>
+  <div id="entries-container">${entriesHtml}</div>`;
+}
+
+function bindCarnet(){
+  tempTags=[];editingIdx=null;renderTagPills();
+}
+function addTag(){
+  const inp=document.getElementById('new-tag');
+  const t=inp.value.trim();if(!t||tempTags.includes(t))return;
+  tempTags.push(t);inp.value='';renderTagPills();
+}
+function renderTagPills(){
+  const w=document.getElementById('tag-pills');if(!w)return;
+  w.innerHTML=tempTags.map((t,i)=>`<span class="tag tag-green" style="cursor:pointer" onclick="tempTags.splice(${i},1);renderTagPills()">${escHtml(t)} ×</span>`).join('');
+}
+function saveEntry(){
+  const date=document.getElementById('entry-date').value||new Date().toISOString().slice(0,10);
+  const text=document.getElementById('entry-text').value.trim();if(!text)return;
+  if(editingIdx!==null){DB[currentJeune].entries.splice(editingIdx,1);editingIdx=null;}
+  DB[currentJeune].entries.push({date,tags:[...tempTags],text});
+  saveDB();clearForm();
+  document.getElementById('entries-container').innerHTML=buildEntriesHTML();
+  renderSidebar();
+}
+function clearForm(){
+  document.getElementById('entry-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('entry-text').value='';
+  tempTags=[];renderTagPills();editingIdx=null;
+}
+function editEntry(i){
+  const e=DB[currentJeune].entries[i];
+  document.getElementById('entry-date').value=e.date;
+  document.getElementById('entry-text').value=e.text;
+  tempTags=[...(e.tags||[])];renderTagPills();editingIdx=i;
+  document.getElementById('entry-date').scrollIntoView({behavior:'smooth'});
+}
+function deleteEntry(i){
+  if(!confirm('Supprimer cette annotation ?'))return;
+  DB[currentJeune].entries.splice(i,1);saveDB();
+  document.getElementById('entries-container').innerHTML=buildEntriesHTML();
+  renderSidebar();
+}
+function buildEntriesHTML(){
+  const entries=[...DB[currentJeune].entries].map((e,i)=>({...e,_i:i})).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!entries.length)return '<div style="text-align:center;padding:2rem;color:var(--text2);font-size:12px">Aucune annotation</div>';
+  return entries.map(e=>{
+    const warn=(e.tags||[]).some(t=>/(vigilance|déprim|surveill|absent)/i.test(t));
+    const tagsHtml=(e.tags||[]).map(t=>{
+      const cls=/(vigilance|déprim|surveill|absent)/i.test(t)?'tag-coral':/(cuisine|atelier|pâtiss)/i.test(t)?'tag-green':/(ponctualité|retard)/i.test(t)?'tag-amber':'tag-gray';
+      return `<span class="tag ${cls}">${t}</span>`;
+    }).join('');
+    return `<div class="entry${warn?' warn':''}">
+      <div class="entry-date">${fmtDate(e.date)}</div>
+      <div style="margin-bottom:6px">${tagsHtml}</div>
+      <div class="entry-text">${escHtml(e.text)}</div>
+      <div class="entry-actions">
+        <button class="btn-sm" onclick="editEntry(${e._i})">Modifier</button>
+        <button class="btn-sm btn-danger" onclick="deleteEntry(${e._i})">Supprimer</button>
+      </div></div>`;
+  }).join('');
+}
+
+/* ── ATELIERS ── */
+function renderAteliersHTML(){
+  function listHtml(type){
+    return DB[currentJeune].ateliers[type].map((a,i)=>`
+      <div class="atelier-row">
+        <span>${escHtml(a.name)}</span>
+        <input type="checkbox" ${a.fait?'checked':''} data-type="${type}" data-i="${i}" data-field="fait">
+        <input type="checkbox" ${a.valide?'checked':''} data-type="${type}" data-i="${i}" data-field="valide">
+      </div>`).join('');
+  }
+  return `<div class="g2">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--green)"></span>Cuisine</div>
+      <div class="atelier-hdr"><div style="font-size:10px;color:var(--text2)">Atelier</div><div style="font-size:10px;color:var(--text2);text-align:center">Fait</div><div style="font-size:10px;color:var(--text2);text-align:center">Validé</div></div>
+      <div id="atelier-cuisine-list">${listHtml('cuisine')}</div>
+      <div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="new-cuisine" placeholder="Ajouter un atelier…" style="font-size:11px"><button class="btn-sm" onclick="addAtelier('cuisine')">+</button></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--amber)"></span>Autonomie</div>
+      <div class="atelier-hdr"><div style="font-size:10px;color:var(--text2)">Atelier</div><div style="font-size:10px;color:var(--text2);text-align:center">Fait</div><div style="font-size:10px;color:var(--text2);text-align:center">Validé</div></div>
+      <div id="atelier-auto-list">${listHtml('auto')}</div>
+      <div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="new-auto" placeholder="Ajouter un atelier…" style="font-size:11px"><button class="btn-sm" onclick="addAtelier('auto')">+</button></div>
+    </div>
+  </div>`;
+}
+function bindAteliers(){
+  document.querySelectorAll('[data-type][data-field]').forEach(cb=>{
+    cb.onchange=function(){
+      DB[currentJeune].ateliers[this.dataset.type][+this.dataset.i][this.dataset.field]=this.checked;
+      saveDB();updateStats();
+    };
+  });
+}
+function addAtelier(type){
+  const inp=document.getElementById('new-'+type);
+  const n=inp.value.trim();if(!n)return;
+  DB[currentJeune].ateliers[type].push({name:n,fait:false,valide:false});
+  inp.value='';saveDB();
+  document.getElementById('atelier-'+type+'-list').innerHTML=DB[currentJeune].ateliers[type].map((a,i)=>`
+    <div class="atelier-row"><span>${escHtml(a.name)}</span>
+      <input type="checkbox" ${a.fait?'checked':''} data-type="${type}" data-i="${i}" data-field="fait">
+      <input type="checkbox" ${a.valide?'checked':''} data-type="${type}" data-i="${i}" data-field="valide">
+    </div>`).join('');
+  bindAteliers();updateStats();
+}
+
+/* ── SKILLS ── */
+function renderSkillsHTML(){
+  return `<div class="card">
+    <div class="card-title"><span class="dot" style="background:var(--blue)"></span>Compétences <span style="font-size:10px;color:var(--text2);font-weight:400;text-transform:none;letter-spacing:0;margin-left:4px">● = acquis</span></div>
+    <div id="skills-list">${buildSkillsHTML()}</div>
+    <div style="display:flex;gap:6px;margin-top:8px"><input type="text" id="new-skill" placeholder="Ajouter une compétence…" style="font-size:11px"><button class="btn-sm" onclick="addSkill()">+</button></div>
+  </div>`;
+}
+function buildSkillsHTML(){
+  return DB[currentJeune].skills.map((sk,i)=>`
+    <div class="skill-row">
+      <span>${escHtml(sk.name)}</span>
+      <div class="stars">${[1,2,3].map(v=>`<div class="star${sk.level>=v?' on':''}" onclick="setSkill(${i},${v})"></div>`).join('')}</div>
+    </div>`).join('');
+}
+function bindSkills(){}
+function setSkill(i,v){
+  DB[currentJeune].skills[i].level=DB[currentJeune].skills[i].level===v?0:v;
+  saveDB();updateStats();
+  document.getElementById('skills-list').innerHTML=buildSkillsHTML();
+}
+function addSkill(){
+  const inp=document.getElementById('new-skill');
+  const n=inp.value.trim();if(!n)return;
+  DB[currentJeune].skills.push({name:n,level:0});inp.value='';saveDB();
+  document.getElementById('skills-list').innerHTML=buildSkillsHTML();
+}
+
+/* ── ADMIN ── */
+function renderAdminHTML(){
+  const j=DB[currentJeune];
+  const checksHtml=j.adminChecks.map((c,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <input type="checkbox" ${c.done?'checked':''} data-admin-i="${i}" style="flex-shrink:0">
+      <span>${escHtml(c.name)}</span>
+    </div>`).join('');
+  const comportHtml=j.comportChecks.map((c,i)=>`
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span style="color:var(--text2)">${escHtml(c.name)}</span>
+      <div class="stars">${[1,2,3].map(v=>`<div class="star${(c.level||0)>=v?' on':''}" onclick="setComport(${i},${v})"></div>`).join('')}</div>
+    </div>`).join('');
+  return `<div class="g2">
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--purple)"></span>Checklist admin</div>
+      <div id="admin-checks-list">${checksHtml}</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:var(--coral)"></span>Comportement</div>
+      <div id="comport-list">${comportHtml}</div>
+    </div>
+  </div>`;
+}
+function bindAdmin(){
+  document.querySelectorAll('[data-admin-i]').forEach(cb=>{
+    cb.onchange=function(){DB[currentJeune].adminChecks[+this.dataset.adminI].done=this.checked;saveDB();};
+  });
+}
+function setComport(i,v){
+  DB[currentJeune].comportChecks[i].level=DB[currentJeune].comportChecks[i].level===v?0:v;
+  saveDB();
+  document.getElementById('comport-list').innerHTML=DB[currentJeune].comportChecks.map((c,idx)=>`
+    <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span style="color:var(--text2)">${escHtml(c.name)}</span>
+      <div class="stars">${[1,2,3].map(v=>`<div class="star${(c.level||0)>=v?' on':''}" onclick="setComport(${idx},${v})"></div>`).join('')}</div>
+    </div>`).join('');
+}
+
+function updateStats(){
+  const j=DB[currentJeune];
+  const tA=j.ateliers.cuisine.length+j.ateliers.auto.length;
+  const dA=j.ateliers.cuisine.filter(x=>x.fait).length+j.ateliers.auto.filter(x=>x.fait).length;
+  const acq=j.skills.filter(x=>x.level===3).length;
+  const pct=tA?Math.round(dA/tA*100):0;
+  const stats=document.querySelector('.stats-row');
+  if(stats) stats.innerHTML=`
+    <div class="stat"><div class="stat-n" style="color:var(--green)">${dA}</div><div class="stat-l">Ateliers faits</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--amber)">${acq}</div><div class="stat-l">Compétences</div></div>
+    <div class="stat"><div class="stat-n" style="color:var(--blue)">${pct}%</div><div class="stat-l">Progression</div></div>`;
+  renderSidebar();
+}
+
+/* ── IMPORT DOCX ── */
+function homeDrop(e){
+  e.preventDefault();
+  const dz=document.getElementById('home-drop-zone');
+  if(dz){dz.style.borderColor='var(--border)';dz.style.background='var(--bg2)';}
+  const f=e.dataTransfer.files[0];
+  if(f) handleFile(f);
+}
+
+function renderHomeGrid(){
+  const grid=document.getElementById('home-jeunes-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  Object.keys(DB).forEach(name=>{
+    const j=DB[name];
+    const tA=j.ateliers.cuisine.length+j.ateliers.auto.length;
+    const dA=j.ateliers.cuisine.filter(x=>x.fait).length+j.ateliers.auto.filter(x=>x.fait).length;
+    const pct=tA?Math.round(dA/tA*100):0;
+    const warn=j.entries&&j.entries.some(e=>(e.tags||[]).some(t=>/(vigilance|déprim|surveill|absent)/i.test(t)));
+    const card=document.createElement('div');
+    card.style.cssText='background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:12px;cursor:pointer;transition:box-shadow .15s';
+    card.onmouseenter=()=>card.style.boxShadow='0 2px 8px rgba(0,0,0,.08)';
+    card.onmouseleave=()=>card.style.boxShadow='none';
+    card.innerHTML=`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:32px;height:32px;border-radius:50%;background:${avatarColor(name)}22;color:${avatarColor(name)};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${initials(name)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${name}${warn?' <span style="width:6px;height:6px;background:var(--amber);border-radius:50%;display:inline-block;margin-left:3px;vertical-align:middle"></span>':''}</div>
+          <div style="font-size:10px;color:var(--text2)">${j.entries.length} note${j.entries.length!==1?'s':''}</div>
+        </div>
+      </div>
+      <div style="background:var(--bg2);border-radius:3px;height:4px;overflow:hidden">
+        <div style="height:100%;background:var(--green);border-radius:3px;width:${pct}%"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text2);margin-top:4px">${pct}% progression</div>`;
+    card.onclick=()=>selectJeune(name);
+    grid.appendChild(card);
+  });
+}
+
+function toggleImport(){
+  const s=document.getElementById('import-section');
+  s.style.display=s.style.display==='none'||!s.style.display?'block':'none';
+}
+function handleDrop(e){e.preventDefault();e.currentTarget.classList.remove('over');const f=e.dataTransfer.files[0];if(f)handleFile(f);}
+function handleFile(file){
+  // Redirect status/preview to home if visible
+  const homeStatus=document.getElementById('home-import-status');
+  const homePreview=document.getElementById('home-import-preview');
+  if(homeStatus) homeStatus.style.display='block';
+  if(!file||!file.name.endsWith('.docx')){alert('Fichier .docx requis');return;}
+  const st=document.getElementById('home-import-status')||document.getElementById('import-status');
+  const fill=document.getElementById('import-progress-fill')||{style:{}};
+  const stText={textContent:''};
+  st.style.display='block';stText.textContent='Lecture…';fill.style.width='20%';
+  const reader=new FileReader();
+  reader.onload=function(e){
+    fill.style.width='60%';stText.textContent='Analyse des annotations…';
+    mammoth.extractRawText({arrayBuffer:e.target.result}).then(result=>{
+      fill.style.width='90%';
+      const parsed=parseCarnet(result.value,file.name.replace('.docx','').trim());
+      fill.style.width='100%';stText.textContent=`Trouvé : ${parsed.entries.length} annotation(s)`;
+      showPreview(parsed);
+    }).catch(err=>{stText.textContent='Erreur : '+err.message;});
+  };
+  reader.readAsArrayBuffer(file);
+}
+function parseCarnet(text,filename){
+  const MONTHS={janvier:1,janv:1,fev:2,févr:2,février:2,fevrier:2,mars:3,avr:4,avril:4,mai:5,juin:6,juil:7,juillet:7,aout:8,août:8,sep:9,sept:9,septembre:9,oct:10,octobre:10,nov:11,novembre:11,dec:12,déc:12,décembre:12,decembre:12};
+  const CY=new Date().getFullYear();
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+
+  // ── 1. IDENTITY from first lines ──
+  let prenom=filename.replace(/^\d+_/,'').replace(/_\d.*$/,'').trim();
+  let nom='',ddn='',arrivee='',ref='',dossier='',pays='',langue='';
+
+  const headerBlock=lines.slice(0,6).join(' ');
+
+  // Dossier N° — ex: N 882833 or N882833
+  const mN=headerBlock.match(/\bN\s*(\d{6,})/);if(mN)dossier='N '+mN[1];
+  // CSS
+  const mCSS=headerBlock.match(/CSS\s*(\d{6,})/i);if(mCSS)dossier=(dossier?dossier+' · ':'')+mCSS[0];
+  // DDN — ex: 17.03.2009
+  const mDDN=headerBlock.match(/(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})/);
+  if(mDDN)ddn=`${mDDN[3]}-${mDDN[2].padStart(2,'0')}-${mDDN[1].padStart(2,'0')}`;
+  // Pays
+  const mPays=headerBlock.match(/\|\s*([A-ZÀÂÄÉÈÊËÎÏÔÙÛÜ]{4,})\s*\|/);if(mPays)pays=mPays[1];
+  // Référent(e)
+  const mRef=text.match(/(?:r[ée]f[eé]rente?|co.r[ée]f[eé]rent)\s+(?:sera\s+)?(?:Me\s+|M\.\s+)?([A-ZÀÂÄ][a-zàâäéèêëîï]+(?:\s+[A-ZÀÂÄa-zàâäéèêëîï]+)?)/i);
+  if(mRef)ref=mRef[1];
+  // Arrivée — "Arrivée le 4 décembre 2025" or "Arrivée le 4.12.25"
+  const mArr1=text.match(/[Aa]rriv[ée]e?\s+le\s+(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)\s*(\d{4}|\d{2})?/i);
+  if(mArr1){
+    const mo=MONTHS[mArr1[2].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')];
+    let y=mArr1[3]?parseInt(mArr1[3]):CY;if(y<100)y+=2000;
+    if(mo)arrivee=`${y}-${String(mo).padStart(2,'0')}-${mArr1[1].padStart(2,'0')}`;
+  }
+  if(!arrivee){
+    const mArr2=text.match(/[Aa]rriv[ée]e?\s+le\s+(\d{1,2})[.\-\/](\d{1,2})[.\-\/]?(\d{2,4})?/);
+    if(mArr2){let y=mArr2[3]?parseInt(mArr2[3]):CY;if(y<100)y+=2000;arrivee=`${y}-${mArr2[2].padStart(2,'0')}-${mArr2[1].padStart(2,'0')}`;}
+  }
+
+  // ── 2. DATE DETECTION — handles all formats Yvan uses ──
+  function parseDate(line){
+    const l=line.trim();
+    let m;
+    // "Le 11" or "Le 11 decembre" or "Le 26 01" — "Le" prefix
+    m=l.match(/^[Ll]e\s+(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)\s*(\d{4}|\d{2})?$/i);
+    if(m){const mo=MONTHS[m[2].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')];let y=m[3]?parseInt(m[3]):CY;if(y<100)y+=2000;if(mo)return `${y}-${String(mo).padStart(2,'0')}-${m[1].padStart(2,'0')}`;}
+    // "Le 26 01" = day month as numbers
+    m=l.match(/^[Ll]e\s+(\d{1,2})\s+(\d{1,2})\.?\.?$/);
+    if(m)return `${CY}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+    // "Le 11" alone = day only, use arrivee month or current
+    m=l.match(/^[Ll]e\s+(\d{1,2})\.?$/);
+    if(m){
+      const refDate=arrivee?new Date(arrivee):new Date();
+      return `${refDate.getFullYear()}-${String(refDate.getMonth()+1).padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+    }
+    // "17.03" or "17.03.2025" or "15.4"
+    m=l.match(/^(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})[\s.]*$/);
+    if(m){let y=parseInt(m[3]);if(y<100)y+=2000;return `${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;}
+    m=l.match(/^(\d{1,2})[.\-\/](\d{1,2})[\s.]*$/);
+    if(m)return `${CY}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+    // "17 mars" or "17 mars 2025"
+    m=l.match(/^(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)\s*(\d{4}|\d{2})?[\s.]*$/i);
+    if(m){const mo=MONTHS[m[2].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')];let y=m[3]?parseInt(m[3]):CY;if(y<100)y+=2000;if(mo)return `${y}-${String(mo).padStart(2,'0')}-${m[1].padStart(2,'0')}`;}
+    // Date anywhere in the line (not just start) — fallback for loose dates
+    m=l.match(/(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})/);
+    if(m&&l.length<20)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+    return null;
+  }
+
+  // ── 3. SPLIT INTO ENTRIES ──
+  const entries=[];
+  let curDate=null,curLines=[];
+  // Skip header lines (identity block = first lines containing MNA/N°/CSS)
+  const bodyLines=lines.slice(0,5).some(l=>/MNA|N\s*\d{6}|CSS/i.test(l))?lines.slice(3):lines;
+
+  function flush(){
+    if(curDate&&curLines.length){
+      const t=curLines.join('\n').trim();
+      if(t.length>4&&!/^\|/.test(t))
+        entries.push({date:curDate,tags:autoTags(t),text:t});
+    }
+    curLines=[];
+  }
+
+  // Inline date patterns — date starts the line but text follows on same line
+  // e.g. "Le 11 je discute…" or "17.03 anniversaire…" or "15.4 il a cuisiné…"
+  function extractInlineDate(l){
+    let m,rest;
+    // "Le 11 texte..." (day only inline)
+    m=l.match(/^[Ll]e\s+(\d{1,2})\s+(.+)$/);
+    if(m&&!/^(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|\d{2})/i.test(m[2])){
+      const refDate=arrivee?new Date(arrivee):new Date();
+      return {date:`${refDate.getFullYear()}-${String(refDate.getMonth()+1).padStart(2,'0')}-${m[1].padStart(2,'0')}`,rest:m[2]};
+    }
+    // "Le 26 01 texte..." or "Le 11 janvier texte..."
+    m=l.match(/^[Ll]e\s+(\d{1,2})\s+(\d{1,2})\.?\s+(.+)$/);
+    if(m)return {date:`${CY}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`,rest:m[3]};
+    m=l.match(/^[Ll]e\s+(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)\s*(\d{4})?\s+(.+)$/i);
+    if(m){const mo=MONTHS[m[2].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')];if(mo){let y=m[3]?parseInt(m[3]):CY;return {date:`${y}-${String(mo).padStart(2,'0')}-${m[1].padStart(2,'0')}`,rest:m[4]};}}
+    // "17.03 texte..." or "15.4 texte..."
+    m=l.match(/^(\d{1,2})[.\-\/](\d{1,2})[.\-\/]?(\d{2,4})?\s+(.+)$/);
+    if(m&&m[4]){let y=m[3]?parseInt(m[3]):CY;if(y<100)y+=2000;return {date:`${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`,rest:m[4]};}
+    return null;
+  }
+
+  bodyLines.forEach(l=>{
+    if(/^\|/.test(l)||!l)return;
+    // Skip arrivée line (already extracted)
+    if(/[Aa]rriv[ée]e?\s+le/i.test(l))return;
+    // Try pure date line first
+    const d=parseDate(l);
+    if(d){flush();curDate=d;return;}
+    // Try inline date+text
+    const inl=extractInlineDate(l);
+    if(inl){flush();curDate=inl.date;if(inl.rest.trim().length>2)curLines.push(inl.rest.trim());return;}
+    // Plain text
+    if(curDate&&l.length>2)curLines.push(l);
+    else if(!curDate&&l.length>10){
+      curDate=arrivee||new Date().toISOString().slice(0,10);
+      curLines.push(l);
+    }
+  });
+  flush();
+
+  return{prenom,nom,ddn,arrivee,ref,dossier,pays,entries};
+}
+
+function autoTags(t){
+  const tags=[];
+  if(/(cuisiné|cuisine|cuisson|recette|repas|riz|pâtes|pates|soupe|gâteau|gateau|beignet|malawa|pizza|poulet|oignon|frite|tomate|hamburger|mayonnaise|curry|épices|épice)/i.test(t))tags.push('Cuisine');
+  if(/(courses|budget|marché|calculette|argent)/i.test(t))tags.push('Courses');
+  if(/(vigilance|déprim|triste|pleur|fond du lit|surveill|mal|fatigué)/i.test(t))tags.push('Vigilance');
+  if(/(absent|pas venu|ne vient pas|poirott|n'est pas)/i.test(t))tags.push('Absent');
+  if(/(ponctualité|retard|attente|attend|oublié)/i.test(t))tags.push('Ponctualité');
+  if(/(collectif|groupe|ensemble|invité|amis|potes|tablée|convivial)/i.test(t))tags.push('Collectif');
+  if(/(bravo|super|excellent|parfait|progrès|progress|fulgur|bien|bon sens|souriant|positif|évolué|perspicace)/i.test(t))tags.push('Progression');
+  if(/(pâtisserie|gaufre|crème|crêpe|cake|gateau|gâteau|pain|mayonnaise)/i.test(t))tags.push('Pâtisserie');
+  if(/(anniversaire|anniv|fête)/i.test(t))tags.push('Anniversaire');
+  if(/(ramadan)/i.test(t))tags.push('Ramadan');
+  if(/(rangement|nettoyage|frigo|cuisine propre|tri)/i.test(t))tags.push('Rangement');
+  return tags.length?tags:['Note'];
+}
+
+// ── SMART DETECT: analyse tout le texte du carnet pour pré-remplir ateliers & compétences ──
+function detectAteliersFromText(fullText){
+  const T=fullText.toLowerCase();
+  const cuisine=[];
+  const auto=[];
+  const skills=[];
+
+  // ── ATELIERS CUISINE ──
+  const cuisineRules=[
+    {name:'Initiation cuisine',     re:/(initiation|débuter|premier.*repas|premièr.*fois|1er.*fois|1ere.*fois|découvert la cuisine|ne savait pas cuisiner)/i},
+    {name:'Techniques de base',     re:/(désoss|pané|maïzena|maizena|couper|éplucher|eplucher|tailler|trancher|rouler|pétrir)/i},
+    {name:'Hygiène & sécurité',     re:/(hygiène|hygiene|sécurité|securite|propre|nettoy|rangement|dangereux|danger|règle.*cuisine|couteau|brûl)/i},
+    {name:'Repas collectifs',       re:/(repas.*collectif|repas.*group|tablée|cuisin.*ensemble|cuisin.*pour.*tous|cuisin.*pour.*group|assemblée|souper.*équipe)/i},
+    {name:'Recettes du monde',      re:/(kebab|kabuli|cevab|somalien|afghan|agneau|malawa|curry|épices.*tradition|recette.*origin)/i},
+    {name:'Pâtisserie & desserts',  re:/(gâteau|gateau|pain.*hamburger|hamburger|mayonnaise|crème|crêpe|gaufre|beignet|cake|pâtisserie)/i},
+  ];
+  cuisineRules.forEach(r=>{if(r.re.test(T))cuisine.push({name:r.name,fait:true,valide:false});});
+
+  // ── ATELIERS AUTONOMIE ──
+  const autoRules=[
+    {name:'Préparation autonome',   re:/(prépar.*seul|cuisin.*seul|tout seul|autonome|fait.*lui.même|il a fait|a prépar|a cuisiné)/i},
+    {name:'Menus équilibrés',       re:/(équilibr|légumes|nutrition|nutri|verdure|salade|menu|variété|varié)/i},
+    {name:'Courses & budget',       re:/(courses|marché|budget|calculette|argent|prix|liste.*course|faire les courses)/i},
+    {name:'Gestion des repas',      re:/(gestion|planif|organisation|liste|vide frigo|restes|utiliser.*restes|frigo)/i},
+    {name:'Conservation / hygiène', re:/(frigo|conservation|conserver|propre|nettoy|rangement|tri.*épices)/i},
+  ];
+  autoRules.forEach(r=>{if(r.re.test(T))auto.push({name:r.name,fait:true,valide:false});});
+
+  // ── COMPÉTENCES ──
+  const skillRules=[
+    {name:'Couper / éplucher',              re:/(coup|éplucher|eplucher|tailler|trancher|désoss|desoss)/i,             level:2},
+    {name:'Cuisson à la poêle',             re:/(poêle|poele|fri(t|re)|sauter|revenir|dorer)/i,                       level:2},
+    {name:'Cuisson au four',                re:/(four|rôti|roti|gratin|agneau.*four|poulet.*four)/i,                   level:2},
+    {name:'Assaisonnement',                 re:/(assaisonn|épic|épice|sel|poivre|herbe|sauce|curry)/i,                 level:2},
+    {name:'Présentation du plat',           re:/(présent|dressage|belle|bien fait|soigné|joli)/i,                      level:1},
+    {name:'Gérer son poste de travail',     re:/(rangement|place|organisé|poste|mise en place|chaque chose)/i,         level:2},
+    {name:'Respecter les temps de cuisson', re:/(temps.*cuisson|cuisson.*parfait|bien cuit|respect.*temps)/i,          level:1},
+    {name:'Lire & suivre une recette',      re:/(recette|livre.*cuisine|suivre|lire|hamburger.*végétar)/i,             level:1},
+    {name:'Nettoyage / rangement',          re:/(nettoy|rangement|propre|vaisselle|frigo.*nettoy|cuisine.*propre)/i,   level:2},
+    {name:'Travail propre & ordonné',       re:/(ordonné|propre|bien|soin|précis|bonne.*façon|de la meilleure)/i,      level:2},
+  ];
+  skillRules.forEach(r=>{
+    if(r.re.test(T))skills.push({name:r.name,level:r.level});
+    else skills.push({name:r.name,level:0});
+  });
+
+  return{cuisine,auto,skills};
+}
+
+function showPreview(parsed){
+  const detected=detectAteliersFromText(parsed.entries.map(e=>e.text).join(' '));
+  parsed._detected=detected;
+  const prev=document.getElementById('home-import-preview')||document.getElementById('import-preview');
+  prev.style.display='block';
+  const exists=DB.hasOwnProperty(parsed.prenom);
+  const atelierCount=detected.cuisine.length+detected.auto.length;
+  const skillCount=detected.skills.filter(s=>s.level>0).length;
+  prev.innerHTML=`<div class="${exists?'alert-warn':'alert-success'}">
+    <strong>${parsed.prenom}</strong>${parsed.arrivee?' · Arrivée : '+fmtDate(parsed.arrivee):''}${parsed.ref?' · Réf : '+parsed.ref:''}${parsed.dossier?' · '+parsed.dossier:''}<br>
+    <strong>${parsed.entries.length} annotation(s)</strong> · <strong>${atelierCount} atelier(s)</strong> détecté(s) · <strong>${skillCount} compétence(s)</strong> pré-remplie(s)
+    ${exists?'<br>⚠ Profil existant — les données seront fusionnées.':''}
+  </div>
+  <div style="margin-bottom:10px">
+    <div style="font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500">Ateliers détectés dans le texte :</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px">
+      ${detected.cuisine.map(a=>`<span class="tag tag-green">${a.name}</span>`).join('')}
+      ${detected.auto.map(a=>`<span class="tag tag-amber" style="background:var(--amber-l);color:var(--amber-d)">${a.name}</span>`).join('')}
+    </div>
+    ${skillCount>0?`<div style="font-size:11px;color:var(--text2);margin:6px 0 4px;font-weight:500">Compétences détectées :</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px">
+      ${detected.skills.filter(s=>s.level>0).map(s=>`<span class="tag" style="background:var(--blue-l);color:var(--blue-d)">${s.name}</span>`).join('')}
+    </div>`:''}
+  </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn-green btn-sm" onclick='doImport(${JSON.stringify(parsed).replace(/'/g,"&#39;")})'>Importer</button>
+    <button class="btn-sm" onclick="document.getElementById('import-preview').style.display='none'">Annuler</button>
+  </div>`;
+}
+
+function doImport(parsed){
+  const detected=parsed._detected||detectAteliersFromText(parsed.entries.map(e=>e.text).join(' '));
+  if(!DB[parsed.prenom]){
+    DB[parsed.prenom]=makeProfile(parsed.prenom,parsed.nom,parsed.ddn,parsed.arrivee,parsed.ref,parsed.dossier);
+  } else {
+    if(parsed.arrivee&&!DB[parsed.prenom].arrivee)DB[parsed.prenom].arrivee=parsed.arrivee;
+    if(parsed.ref&&!DB[parsed.prenom].ref)DB[parsed.prenom].ref=parsed.ref;
+  }
+  // Merge entries (no duplicates)
+  parsed.entries.forEach(e=>{
+    if(!DB[parsed.prenom].entries.some(x=>x.date===e.date&&x.text===e.text))
+      DB[parsed.prenom].entries.push(e);
+  });
+  // Pre-fill ateliers cuisine — only add if not already present
+  detected.cuisine.forEach(a=>{
+    const exists=DB[parsed.prenom].ateliers.cuisine.find(x=>x.name===a.name);
+    if(exists){exists.fait=true;}
+    else DB[parsed.prenom].ateliers.cuisine.push(a);
+  });
+  // Pre-fill ateliers auto — only add if not already present
+  detected.auto.forEach(a=>{
+    const exists=DB[parsed.prenom].ateliers.auto.find(x=>x.name===a.name);
+    if(exists){exists.fait=true;}
+    else DB[parsed.prenom].ateliers.auto.push(a);
+  });
+  // Pre-fill skills — update level only if detected level > current
+  detected.skills.forEach(s=>{
+    const existing=DB[parsed.prenom].skills.find(x=>x.name===s.name);
+    if(existing){if(s.level>existing.level)existing.level=s.level;}
+    else if(s.level>0) DB[parsed.prenom].skills.push(s);
+  });
+  saveDB();renderSidebar();selectJeune(parsed.prenom);
+  document.getElementById('import-section').style.display='none';
+  document.getElementById('import-preview').style.display='none';
+  renderHomeGrid();
+}
+
+/* ── MODALS ── */
+function openNewJeune(){
+  document.getElementById('nj-arrivee').value=new Date().toISOString().slice(0,10);
+  document.getElementById('modal-new-jeune').classList.add('open');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+function addJeune(){
+  const p=document.getElementById('nj-prenom').value.trim();if(!p)return;
+  DB[p]=makeProfile(p,document.getElementById('nj-nom').value.trim(),document.getElementById('nj-ddn').value,document.getElementById('nj-arrivee').value,document.getElementById('nj-ref').value.trim(),document.getElementById('nj-dossier').value.trim());
+  saveDB();closeModal('modal-new-jeune');renderSidebar();selectJeune(p);
+  ['nj-prenom','nj-nom','nj-ddn','nj-ref','nj-dossier'].forEach(id=>document.getElementById(id).value='');
+}
+function deleteJeune(){
+  if(!confirm(`Supprimer le profil de ${currentJeune} ?`))return;
+  delete DB[currentJeune];currentJeune=null;saveDB();
+  document.getElementById('jeune-panel').style.display='none';
+  document.getElementById('empty-state').style.display='block';
+  document.getElementById('btn-export').style.display='none';
+  renderSidebar();
+}
+
+/* ── PDF EXPORT ── */
+function exportCurrentPDF(){
+  if(!currentJeune)return;
+  const j=DB[currentJeune];
+  const entries=[...j.entries].sort((a,b)=>a.date.localeCompare(b.date));
+  const _docHtml=`<!DOCTYPE html><html lang="fr"><head>
+<meta charset="UTF-8"><title>Suivi ${currentJeune}</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:11px;color:#1E1D1B;padding:14mm;background:#fff}
+h1{font-size:15px;font-weight:700;border-bottom:3px solid #1D9E75;padding-bottom:6px;margin-bottom:4px}
+.sub{font-size:10px;color:#888;margin-bottom:14px}
+.id-box{border:1px solid #D3D1C7;border-radius:6px;padding:10px 14px;margin-bottom:12px;background:#F5F3EE;display:flex;justify-content:space-between}
+.name{font-size:14px;font-weight:700;margin-bottom:3px}
+.meta{font-size:10px;color:#6B6863;margin-bottom:2px}
+.phases{display:flex;margin-bottom:12px;border-radius:5px;overflow:hidden}
+.ph{flex:1;text-align:center;padding:4px 1px;font-size:8px;font-weight:700;color:#fff;line-height:1.3}
+.sec-hdr{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:5px 8px;margin-bottom:0}
+.sec-hdr.g{background:#E1F5EE;color:#085041}.sec-hdr.a{background:#FAEEDA;color:#633806}
+.sec-hdr.b{background:#E6F1FB;color:#0C447C}.sec-hdr.gr{background:#F1EFE8;color:#2C2C2A}
+.sec-body{border:1px solid #D3D1C7;border-top:none;border-radius:0 0 4px 4px;padding:8px 10px;margin-bottom:10px}
+.obs{font-size:11px;line-height:1.7}
+ul.li{list-style:none;padding:0;margin:0}
+ul.li li{padding:3px 0;border-bottom:1px solid #eee;font-size:11px}
+ul.li.g li::before{content:"→ ";color:#1D9E75;font-weight:700}
+ul.li.a li::before{content:"→ ";color:#BA7517;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{background:#F1EFE8;padding:4px 6px;text-align:left;border:1px solid #D3D1C7}
+td{padding:4px 6px;border:1px solid #D3D1C7;vertical-align:top}
+tr:nth-child(even) td{background:#FAFAF8}
+.ck{text-align:center;font-size:12px}.y{color:#1D9E75}.n{color:#ccc}
+.lv{text-align:center;font-weight:700;font-size:11px}
+.lv3{color:#1D9E75}.lv2{color:#BA7517}.lv1{color:#D85A30}
+.entry{border-left:3px solid #1D9E75;padding:6px 10px;margin-bottom:7px}
+.entry.w{border-left-color:#D85A30}
+.edate{font-size:10px;font-weight:700;color:#085041;margin-bottom:3px}
+.entry.w .edate{color:#712B13}
+.tag{display:inline-block;background:#E1F5EE;color:#085041;padding:1px 6px;border-radius:10px;font-size:9px;margin:1px 2px 3px 0;font-weight:600}
+.tw{background:#FAECE7;color:#712B13}.ta{background:#FAEEDA;color:#633806}
+.etxt{font-size:11px;line-height:1.6;white-space:pre-wrap}
+.sig{display:flex;gap:12px;margin-top:14px}
+.sb{flex:1;border:1px solid #D3D1C7;padding:6px 8px;border-radius:4px;background:#F5F3EE;min-height:28px;font-size:9px;color:#888}
+@media print{body{padding:8mm}.entry{break-inside:avoid}}
+</style></head><body>
+<h1>Compte rendu – Suivi éducatif (Atelier cuisine)</h1>
+<div class="sub">EVAM — Formateur : ${j.formateur||'Yvan'} — ${new Date().toLocaleDateString('fr-CH')}</div>
+<div class="id-box">
+  <div>
+    <div class="name">${j.nom||currentJeune}</div>
+    <div class="meta">${[j.ddn&&'Né le '+fmtDate2(j.ddn),j.pays,'MNA'].filter(Boolean).join(' · ')}</div>
+    <div class="meta">Référent : <b>${j.ref||'—'}</b> | Co-réf : <b>${j.coref||'—'}</b></div>
+  </div>
+  <div style="text-align:right;font-size:10px;color:#888">
+    <div>Arrivée : <b>${fmtDate(j.arrivee)||'—'}</b></div>
+    <div style="margin-top:2px">${j.dossier||''}</div>
+  </div>
+</div>
+<div class="phases">${[['J-7','Annonce','#1D9E75'],['Jour 1','Accueil','#534AB7'],['Sem.1','Éval.','#185FA5'],['Sem.1-2','Conv.','#3B6D11'],['Sem.2','Auto.','#BA7517'],['Sem.3','PERI','#993C1D'],['1 mois','PEI','#993556']].map(([l,s,c])=>`<div class="ph" style="background:${c}">${l}<br><span style="font-size:7px;opacity:.8">${s}</span></div>`).join('')}</div>
+${j.obs_generale?`<div class="sec-hdr g">Observation générale</div><div class="sec-body"><p class="obs">${j.obs_generale}</p></div>`:''}
+${(j.evo_positives||[]).length?`<div class="sec-hdr g">Évolutions positives</div><div class="sec-body"><ul class="li g">${j.evo_positives.map(e=>`<li>${e}</li>`).join('')}</ul></div>`:''}
+${(j.pts_consolider||[]).length?`<div class="sec-hdr a">Points à consolider</div><div class="sec-body"><ul class="li a">${j.pts_consolider.map(p=>`<li>${p}</li>`).join('')}</ul></div>`:''}
+${j.synthese?`<div class="sec-hdr b">Synthèse</div><div class="sec-body"><p class="obs">${j.synthese}</p></div>`:''}
+<div class="sec-hdr g">Ateliers cuisine</div>
+<div class="sec-body" style="padding:0">
+<table><tr><th width="38%">Atelier</th><th width="7%" style="text-align:center">Réal.</th><th width="7%" style="text-align:center">Val.</th><th>Observation</th></tr>
+${j.ateliers.cuisine.map(a=>`<tr><td>${a.name}</td><td class="ck ${a.fait?'y':'n'}">${a.fait?'☑':'☐'}</td><td class="ck ${a.valide?'y':'n'}">${a.valide?'☑':'☐'}</td><td>${a.note||''}</td></tr>`).join('')}</table></div>
+<div class="sec-hdr a">Autonomie alimentaire</div>
+<div class="sec-body" style="padding:0">
+<table><tr><th width="38%">Atelier</th><th width="7%" style="text-align:center">Réal.</th><th width="7%" style="text-align:center">Val.</th><th>Observation</th></tr>
+${j.ateliers.auto.map(a=>`<tr><td>${a.name}</td><td class="ck ${a.fait?'y':'n'}">${a.fait?'☑':'☐'}</td><td class="ck ${a.valide?'y':'n'}">${a.valide?'☑':'☐'}</td><td>${a.note||''}</td></tr>`).join('')}</table></div>
+<div class="sec-hdr b">Évaluation des compétences</div>
+<div class="sec-body" style="padding:0">
+<table><tr><th width="42%">Compétence</th><th width="14%" style="text-align:center">Niveau</th><th>Observation</th></tr>
+${j.skills.map(s=>{const l=s.level||0;const st=l===3?'● ● ●':l===2?'● ● ○':l===1?'● ○ ○':'○ ○ ○';return `<tr><td>${s.name}</td><td class="lv lv${l||0}">${st}</td><td>${s.obs||''}</td></tr>`;}).join('')}</table></div>
+<div class="sec-hdr gr">Suivi admin & comportement</div>
+<div class="sec-body" style="padding:0;display:flex">
+<table style="flex:1;border-right:1px solid #D3D1C7"><tr><th>Admin</th><th width="10%" style="text-align:center">✓</th><th>Note</th></tr>
+${j.adminChecks.map(c=>`<tr><td>${c.name}</td><td class="ck ${c.done?'y':'n'}">${c.done?'☑':'☐'}</td><td>${c.note||''}</td></tr>`).join('')}</table>
+<table style="flex:1"><tr><th>Comportement</th><th width="22%" style="text-align:center">Niv.</th></tr>
+${j.comportChecks.map(c=>{const l=c.level||0;return `<tr><td>${c.name}</td><td class="lv lv${l}">${['○○○','●○○','●●○','●●●'][l]}</td></tr>`;}).join('')}</table>
+</div>
+${entries.length?`<div class="sec-hdr gr">Carnet de bord</div><div class="sec-body">${entries.map(e=>{const w=(e.tags||[]).some(t=>/(vigilance|absent|surveill)/i.test(t));return `<div class="entry${w?' w':''}"><div class="edate">${fmtDate(e.date)}</div><div>${(e.tags||[]).map(t=>`<span class="tag${/(vigilance|absent)/i.test(t)?' tw':/(ponct)/i.test(t)?' ta':''}">${t}</span>`).join('')}</div><div class="etxt">${e.text}</div></div>`;}).join('')}</div>`:''}
+<div class="sig"><div class="sb">Signature du formateur</div><div class="sb" style="flex:.5">Date</div><div class="sb">Visa responsable</div></div>
+<script>window.addEventListener('load',function(){window.print();});<\/script>
+</body></html>`);
+  const _blob=new Blob([_docHtml],{type:'text/html;charset=utf-8'});
+  const _url=URL.createObjectURL(_blob);
+  const _a=document.createElement('a');
+  _a.href=_url;_a.target='_blank';
+  document.body.appendChild(_a);_a.click();
+  document.body.removeChild(_a);
+  setTimeout(()=>URL.revokeObjectURL(_url),15000);
+}
+
+
+/* ── UTILS ── */
+function fmtDate(d){
+  if(!d)return '';
+  try{const[y,m,day]=d.split('-');const mo=['jan.','fév.','mar.','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];return `${parseInt(day)} ${mo[parseInt(m)-1]} ${y}`;}catch(e){return d;}
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+
+// ── LECTEUR DOCX NATIF (sans CDN) ──
+const mammoth = {
+  extractRawText: async function({arrayBuffer}) {
+    const bytes = new Uint8Array(arrayBuffer);
+    let offset = 0;
+    while (offset < bytes.length - 30) {
+      if (bytes[offset]===0x50&&bytes[offset+1]===0x4B&&bytes[offset+2]===0x03&&bytes[offset+3]===0x04) {
+        const comp = bytes[offset+8]|(bytes[offset+9]<<8);
+        const cSize = bytes[offset+18]|(bytes[offset+19]<<8)|(bytes[offset+20]<<16)|(bytes[offset+21]<<24);
+        const nLen = bytes[offset+26]|(bytes[offset+27]<<8);
+        const eLen = bytes[offset+28]|(bytes[offset+29]<<8);
+        const name = String.fromCharCode(...bytes.slice(offset+30,offset+30+nLen));
+        const dStart = offset+30+nLen+eLen;
+        if (name === 'word/document.xml') {
+          const data = bytes.slice(dStart, dStart+cSize);
+          let xml;
+          if (comp===8) {
+            try {
+              const ds = new DecompressionStream('deflate-raw');
+              const w = ds.writable.getWriter();
+              const r = ds.readable.getReader();
+              w.write(data); w.close();
+              const chunks=[]; 
+              while(true){const {done,value}=await r.read();if(done)break;chunks.push(value);}
+              const total=chunks.reduce((a,b)=>a+b.length,0);
+              const res=new Uint8Array(total); let pos=0;
+              for(const ch of chunks){res.set(ch,pos);pos+=ch.length;}
+              xml = new TextDecoder('utf-8').decode(res);
+            } catch(e) {
+              xml = new TextDecoder('utf-8',{fatal:false}).decode(bytes);
+            }
+          } else { xml = new TextDecoder('utf-8').decode(data); }
+          return {value: _xmlToText(xml)};
+        }
+        offset = dStart+cSize;
+      } else { offset++; }
+    }
+    // Fallback brut
+    const raw = new TextDecoder('utf-8',{fatal:false}).decode(bytes);
+    return {value: _xmlToText(raw)};
+  }
+};
+
+function _xmlToText(xml) {
+  if(!xml) return '';
+  let result='', pos=0;
+  while(pos < xml.length) {
+    const pS=xml.indexOf('<w:p',pos); if(pS<0)break;
+    const pE=xml.indexOf('</w:p>',pS); if(pE<0)break;
+    const para=xml.slice(pS,pE); let pt='', tp=0;
+    while(tp<para.length){
+      const tS=para.indexOf('<w:t',tp); if(tS<0)break;
+      const tC=para.indexOf('>',tS); if(tC<0)break;
+      const tE=para.indexOf('</w:t>',tC); if(tE<0)break;
+      pt+=para.slice(tC+1,tE); tp=tE+6;
+    }
+    result+=(pt.trim()?pt:'')+'\n'; pos=pE+6;
+  }
+  return result;
+}
+
+loadDB();
+renderSidebar();
+renderHomeGrid();
+</script>
+</body>
+</html>
